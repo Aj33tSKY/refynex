@@ -1,0 +1,11 @@
+# Raw, unoptimized source media (1GB+) — not part of the deployed site
+Portfolio1_10-25/
+
+# Vercel
+.vercel
+
+# Env
+.env*.local
+
+# OS
+.DS_Store
