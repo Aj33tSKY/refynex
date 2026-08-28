@@ -295,30 +295,6 @@ p { color: var(--ink-dim); }
 @keyframes revealUp { to { opacity: 1; transform: translateY(0); } }
 @keyframes fadeUp { to { opacity: 1; transform: translateY(0); } }
 
-/* ============ MARQUEE ============ */
-.marquee {
-  border-top: 1px solid var(--line);
-  border-bottom: 1px solid var(--line);
-  overflow: hidden;
-  padding: 22px 0;
-  background: var(--bg-alt);
-}
-.marquee-track {
-  display: flex;
-  width: max-content;
-  gap: 20px;
-  animation: marquee 32s linear infinite;
-}
-.marquee-track span {
-  font-family: var(--ff-display);
-  font-size: 1.4rem;
-  letter-spacing: 0.02em;
-  color: var(--ink-faint);
-  white-space: nowrap;
-}
-.marquee-track span:nth-child(2n) { color: var(--accent); }
-@keyframes marquee { to { transform: translateX(-50%); } }
-
 /* ============ SECTION HEAD ============ */
 .section-head { margin-bottom: 56px; max-width: 640px; }
 .section-head h2 { color: var(--ink); }
