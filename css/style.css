@@ -398,20 +398,8 @@ section { padding: 120px 0; }
 }
 .work-item-info h3 { font-size: 1.15rem; color: var(--ink); margin-top: 6px; }
 
-/* ============ STATS ============ */
-.stats { background: var(--bg-alt); border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); padding: 70px 0; }
-.stats-grid {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  text-align: center;
-}
-.stat h3 { font-size: clamp(2.2rem, 5vw, 3.2rem); color: var(--accent); }
-.stat p { font-size: 0.8rem; letter-spacing: 0.05em; text-transform: uppercase; color: var(--ink-dim); margin-top: 8px; }
-
 /* ============ ABOUT / PROCESS ============ */
-.about-grid { display: grid; grid-template-columns: 0.9fr 1.1fr; gap: 72px; align-items: center; }
-.about-media { border-radius: 4px; overflow: hidden; aspect-ratio: 4/5; }
-.about-media img { width: 100%; height: 100%; object-fit: cover; }
+.about-content { max-width: 720px; }
 .about-content h2 { color: var(--ink); margin-bottom: 20px; }
 .about-content > p { max-width: 480px; margin-bottom: 44px; }
 
@@ -462,17 +450,6 @@ section { padding: 120px 0; }
 .contact-form .btn { width: 100%; justify-content: center; }
 .form-note { text-align: center; margin-top: 16px; font-size: 0.85rem; color: var(--accent); min-height: 1em; }
 
-.cta-pricing {
-  display: flex;
-  justify-content: center;
-  gap: clamp(24px, 6vw, 72px);
-  flex-wrap: wrap;
-  padding-top: 40px;
-  border-top: 1px solid var(--line);
-}
-.cta-pricing h4 { font-size: 0.75rem; letter-spacing: 0.1em; text-transform: uppercase; color: var(--ink-faint); font-family: var(--ff-body); font-weight: 600; margin-bottom: 6px; }
-.cta-pricing p { color: var(--ink); font-weight: 600; }
-
 /* ============ FOOTER ============ */
 .site-footer { padding: 80px 0 0; }
 .footer-grid {
@@ -498,12 +475,9 @@ section { padding: 120px 0; }
 
 /* ============ RESPONSIVE ============ */
 @media (max-width: 1024px) {
-  .services-grid { grid-template-columns: repeat(2, 1fr); }
   .work-grid { grid-template-columns: repeat(2, 1fr); }
   .featured { grid-template-columns: 1fr; }
   .featured-media { min-height: 320px; }
-  .about-grid { grid-template-columns: 1fr; gap: 40px; }
-  .stats-grid { grid-template-columns: repeat(2, 1fr); gap: 32px; }
   .footer-grid { grid-template-columns: 1fr 1fr; }
 }
 
@@ -513,6 +487,5 @@ section { padding: 120px 0; }
   section { padding: 80px 0; }
   .services-grid, .work-grid { grid-template-columns: 1fr; }
   .form-row { grid-template-columns: 1fr; }
-  .cta-pricing { gap: 32px; }
   .hero-content { padding-bottom: 70px; }
 }

@@ -63,7 +63,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   /* Scroll reveal */
   const animatedEls = document.querySelectorAll(
-    '.service-card, .work-item, .stat, .about-media, .about-content, .featured-content, .featured-media, .testimonial .quote'
+    '.service-card, .work-item, .about-content, .featured-content, .featured-media, .testimonial .quote'
   );
   animatedEls.forEach(el => el.setAttribute('data-animate', ''));
 
