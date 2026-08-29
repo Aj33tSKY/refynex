@@ -95,7 +95,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const formNote = document.getElementById('formNote');
   form.addEventListener('submit', (e) => {
     e.preventDefault();
-    formNote.textContent = "Thanks — this form isn't connected yet. Email hello@refynex.com for now.";
+    formNote.textContent = "Thanks — this form isn't connected yet. Email hello@refynelabs.com for now.";
   });
 
 });
