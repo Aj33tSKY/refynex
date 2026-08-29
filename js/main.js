@@ -90,12 +90,42 @@ document.addEventListener('DOMContentLoaded', () => {
     videoObserver.observe(heroVideo);
   }
 
-  /* Contact form (placeholder handler — no backend wired yet) */
+  /* Contact form */
   const form = document.getElementById('contactForm');
   const formNote = document.getElementById('formNote');
-  form.addEventListener('submit', (e) => {
+  const submitBtn = form.querySelector('button[type="submit"]');
+
+  form.addEventListener('submit', async (e) => {
     e.preventDefault();
-    formNote.textContent = "Thanks — this form isn't connected yet. Email hello@refynelabs.com for now.";
+
+    const name = form.name.value.trim();
+    const email = form.email.value.trim();
+    const message = form.message.value.trim();
+
+    submitBtn.disabled = true;
+    submitBtn.textContent = 'Sending…';
+    formNote.textContent = '';
+
+    try {
+      const res = await fetch('/api/contact', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ name, email, message }),
+      });
+      const data = await res.json();
+
+      if (res.ok && data.ok) {
+        formNote.textContent = "Thanks — your message is on its way. We'll get back to you within one business day.";
+        form.reset();
+      } else {
+        formNote.textContent = data.error || 'Something went wrong — please email hello@refynelabs.co.uk directly.';
+      }
+    } catch (err) {
+      formNote.textContent = 'Something went wrong — please email hello@refynelabs.co.uk directly.';
+    } finally {
+      submitBtn.disabled = false;
+      submitBtn.textContent = 'Send Message';
+    }
   });
 
 });
