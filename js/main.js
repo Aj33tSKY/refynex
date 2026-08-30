@@ -115,7 +115,7 @@ document.addEventListener('DOMContentLoaded', () => {
       const data = await res.json();
 
       if (res.ok && data.ok) {
-        formNote.textContent = "Thanks — your message is on its way. We'll get back to you within one business day.";
+        formNote.textContent = "Thanks — your message is on its way. We'll get back to you as soon as possible.";
         form.reset();
       } else {
         formNote.textContent = data.error || 'Something went wrong — please email hello@refynelabs.co.uk directly.';

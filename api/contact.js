@@ -41,6 +41,29 @@ export default async function handler(req, res) {
       return res.status(502).json({ ok: false, error: 'Failed to send email' });
     }
 
+    // Best-effort confirmation to the visitor — don't fail the request if this errors.
+    try {
+      const confirmRes = await fetch('https://api.resend.com/emails', {
+        method: 'POST',
+        headers: {
+          Authorization: `Bearer ${apiKey}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          from: 'Refyne Labs <hello@refynelabs.co.uk>',
+          to: [email],
+          reply_to: 'ajeet@refynelabs.co.uk',
+          subject: "We've received your message — Refyne Labs",
+          text: `Hi ${name},\n\nThanks for reaching out to Refyne Labs. We've received your message and will get back to you as soon as possible.\n\nYour message:\n${message}\n\n— Refyne Labs`,
+        }),
+      });
+      if (!confirmRes.ok) {
+        console.error('Confirmation email failed:', confirmRes.status, await confirmRes.text());
+      }
+    } catch (err) {
+      console.error('Confirmation email send failed:', err);
+    }
+
     return res.status(200).json({ ok: true });
   } catch (err) {
     console.error('Contact form send failed:', err);
