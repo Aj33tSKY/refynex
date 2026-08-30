@@ -34,6 +34,31 @@ document.addEventListener('DOMContentLoaded', () => {
     document.documentElement.classList.add('supports-glass-refraction');
   }
 
+  /* Hero title rotating word */
+  const heroRotateText = document.getElementById('heroRotateText');
+  if (heroRotateText) {
+    const phrases = ['big launch', 'brand film', 'product demo', 'founder showcase', 'big event'];
+    let phraseIndex = 0;
+    setInterval(() => {
+      heroRotateText.classList.add('rotate-out');
+      setTimeout(() => {
+        phraseIndex = (phraseIndex + 1) % phrases.length;
+        heroRotateText.textContent = phrases[phraseIndex];
+        // Snap to the "entering from below" position with no transition,
+        // force a reflow so the browser registers it, then re-enable the
+        // transition and remove the class — animating back to the
+        // resting state. Without the reflow the browser would batch this
+        // with the rotate-out removal and skip straight to the end state.
+        heroRotateText.style.transition = 'none';
+        heroRotateText.classList.remove('rotate-out');
+        heroRotateText.classList.add('rotate-in-from-bottom');
+        void heroRotateText.offsetWidth;
+        heroRotateText.style.transition = '';
+        heroRotateText.classList.remove('rotate-in-from-bottom');
+      }, 450);
+    }, 2000);
+  }
+
   /* Mobile menu */
   const navToggle = document.getElementById('navToggle');
   const mobileMenu = document.getElementById('mobileMenu');
@@ -47,19 +72,6 @@ document.addEventListener('DOMContentLoaded', () => {
       mobileMenu.classList.remove('open');
     });
   });
-
-  /* Custom cursor (desktop only) */
-  const cursorDot = document.getElementById('cursorDot');
-  if (window.matchMedia('(hover: hover) and (pointer: fine)').matches) {
-    window.addEventListener('mousemove', e => {
-      cursorDot.style.left = e.clientX + 'px';
-      cursorDot.style.top = e.clientY + 'px';
-    });
-    document.querySelectorAll('a, button, .work-item').forEach(el => {
-      el.addEventListener('mouseenter', () => cursorDot.classList.add('hovered'));
-      el.addEventListener('mouseleave', () => cursorDot.classList.remove('hovered'));
-    });
-  }
 
   /* Portfolio filters */
   const filterBtns = document.querySelectorAll('.filter-btn');

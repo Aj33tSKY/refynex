@@ -14,7 +14,7 @@
   --glass-border: rgba(255,255,255,0.16);
   --glass-highlight: rgba(255,255,255,0.3);
   --glass-blur: blur(20px) saturate(160%);
-  --ff-display: "Bebas Neue", "Anton", Impact, sans-serif;
+  --ff-display: "General Sans", "Inter", -apple-system, sans-serif;
   --ff-body: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
   --container: 1240px;
   --ease: cubic-bezier(0.16, 1, 0.3, 1);
@@ -54,9 +54,9 @@ ul { list-style: none; }
 
 h1, h2, h3, h4 {
   font-family: var(--ff-display);
-  font-weight: 400;
-  letter-spacing: 0.01em;
-  line-height: 1.02;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  line-height: 1.05;
   text-transform: uppercase;
 }
 
@@ -97,10 +97,13 @@ p { color: var(--ink-dim); }
   color: #fff;
 }
 .btn-primary:hover {
-  background: linear-gradient(180deg, rgba(255,255,255,0.95), rgba(255,255,255,0.82));
-  border-color: rgba(255,255,255,0.5);
-  box-shadow: inset 0 1px 0 rgba(255,255,255,0.6), 0 8px 24px rgba(0,0,0,0.2);
-  color: var(--bg);
+  background: linear-gradient(180deg, rgba(255,255,255,0.32), rgba(255,255,255,0.15));
+  border-color: rgba(255,255,255,0.4);
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,0.65),
+    inset 0 -10px 14px rgba(0,0,0,0.18),
+    0 12px 28px rgba(0,0,0,0.4);
+  color: #fff;
 }
 .btn-outline {
   background: var(--glass-bg);
@@ -135,25 +138,6 @@ p { color: var(--ink-dim); }
   will-change: backdrop-filter, transform;
   isolation: isolate;
 }
-
-/* ============ CURSOR ============ */
-.cursor-dot {
-  position: fixed;
-  top: 0; left: 0;
-  width: 10px; height: 10px;
-  background: var(--accent);
-  border-radius: 50%;
-  pointer-events: none;
-  z-index: 9999;
-  transform: translate(-50%, -50%);
-  transition: width 0.25s var(--ease), height 0.25s var(--ease), opacity 0.25s;
-  mix-blend-mode: difference;
-  display: none;
-}
-@media (hover: hover) and (pointer: fine) {
-  .cursor-dot { display: block; }
-}
-.cursor-dot.hovered { width: 46px; height: 46px; background: var(--ink); }
 
 /* ============ PRELOADER ============ */
 .preloader {
@@ -298,6 +282,22 @@ p { color: var(--ink-dim); }
   margin-bottom: 26px;
 }
 .hero-title span { display: block; overflow: hidden; }
+/* Overrides the block/overflow rule above (needs to beat it on
+   specificity) so the rotating word sits inline within the text line
+   instead of forcing its own line break. */
+.hero-title .hero-rotate-wrap {
+  display: inline-block;
+  overflow: hidden;
+  vertical-align: bottom;
+  height: 1em;
+  line-height: 1em;
+}
+.hero-title .hero-rotate-text {
+  display: inline-block;
+  transition: transform 0.45s var(--ease), opacity 0.45s var(--ease);
+}
+.hero-rotate-text.rotate-out { transform: translateY(-100%); opacity: 0; }
+.hero-rotate-text.rotate-in-from-bottom { transform: translateY(100%); opacity: 0; }
 
 .hero-sub {
   max-width: 480px;
@@ -371,12 +371,6 @@ section { padding: 120px 0; }
   -webkit-backdrop-filter: var(--glass-blur);
   border: 1px solid var(--glass-border);
   box-shadow: inset 0 1px 0 rgba(255,255,255,0.14), 0 8px 24px rgba(0,0,0,0.2);
-  transition: background 0.4s var(--ease), transform 0.4s var(--ease), box-shadow 0.4s var(--ease);
-}
-.service-card:hover {
-  background: var(--glass-bg-strong);
-  transform: translateY(-4px);
-  box-shadow: inset 0 1px 0 rgba(255,255,255,0.25), 0 16px 36px rgba(0,0,0,0.3);
 }
 .service-num {
   font-family: var(--ff-display);
