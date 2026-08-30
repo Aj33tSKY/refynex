@@ -19,6 +19,21 @@ document.addEventListener('DOMContentLoaded', () => {
   document.addEventListener('scroll', onScroll, { passive: true });
   onScroll();
 
+  /*
+   * Real liquid-glass refraction (backdrop-filter: url(#svg-filter))
+   * only renders correctly in Chromium engines — Safari and Firefox
+   * parse the declaration but don't feed real backdrop pixels into the
+   * SVG filter, so it silently no-ops there (confirmed: a genuine,
+   * currently-unresolved platform gap, not a bug in this code). We only
+   * opt in on Chromium and leave everyone else on the plain blur+
+   * saturate glass already set in CSS. "Chrome" appears in the UA
+   * string of every Chromium-based browser (Chrome, Edge, Opera, Brave,
+   * Arc) for legacy compat, and never in Safari's or Firefox's.
+   */
+  if (/Chrome/.test(navigator.userAgent)) {
+    document.documentElement.classList.add('supports-glass-refraction');
+  }
+
   /* Mobile menu */
   const navToggle = document.getElementById('navToggle');
   const mobileMenu = document.getElementById('mobileMenu');
