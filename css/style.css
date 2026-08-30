@@ -176,6 +176,11 @@ p { color: var(--ink-dim); }
  * Small buttons sit over softer backgrounds and stay clean.
  */
 .supports-glass-refraction .btn-primary {
+  /* A near-opaque fill leaves nothing for the backdrop filter to bend —
+     lower it so real refraction is actually visible. Only done here,
+     since browsers without refraction get no payoff for the tradeoff
+     and keep the vibrant solid orange instead. */
+  background: linear-gradient(180deg, rgba(217,79,48,0.22), rgba(196,64,36,0.14));
   backdrop-filter: url(#glass-distortion) blur(6px) saturate(160%) brightness(1.05);
 }
 .header-inner {
