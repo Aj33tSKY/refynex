@@ -23,20 +23,39 @@ document.addEventListener('DOMContentLoaded', () => {
    * Real liquid-glass refraction via liquidGL (vendored, js/liquidgl.js —
    * MIT, https://github.com/naughtyduk/liquidGL). It renders its own
    * WebGL lens over each target, sampling actual pixels from its own
-   * snapshot (including live video frames) rather than relying on
-   * backdrop-filter, which does not work at all: Chrome's backdrop-filter
-   * cannot read a <video> element's composited layer, and referencing a
-   * custom SVG filter from backdrop-filter is inconsistently supported
-   * even for non-video content. Every .btn-primary keeps its own CSS
-   * (background/border/box-shadow/blur) as the fallback for browsers
-   * without WebGL — liquidGL enhances it, it doesn't replace it.
+   * snapshot, rather than relying on backdrop-filter (which does not
+   * work reliably at all — inconsistent even for static content, and
+   * Chrome's backdrop-filter cannot read a <video> element's composited
+   * layer under any configuration).
+   *
+   * The hero "View Our Work" button is deliberately NOT a target here:
+   * measured (via requestAnimationFrame counting) real-time refraction
+   * of the *playing* hero video costs ~43% FPS on its own (23fps ->
+   * 13fps), because the library must re-composite a fresh video frame
+   * into its texture every frame. Every other glass element below sits
+   * over static content, which costs a much cheaper ~18%.
+   *
+   * .filter-btn and .service-card were also tried and pulled back out:
+   * both render with persistent glitch artifacts (or, with bevel
+   * disabled, the element's own text/content disappearing entirely)
+   * that survived every fix attempted — display:inline-flex, zero
+   * border-radius, zero bevel, isolating a single instance, ruling out
+   * the .active colour state, ruling out double-init. This looks like a
+   * genuine unresolved bug in the library for these element shapes, not
+   * something fixable from our side, so only the button shapes that
+   * demonstrably render clean are targeted.
+   *
+   * Every target keeps its own CSS (background/border/box-shadow/blur)
+   * as the fallback for browsers without WebGL — liquidGL enhances it,
+   * it doesn't replace it.
    */
   if (typeof liquidGL === 'function') {
     liquidGL({
-      target: '.btn-primary',
+      target: '.btn-outline, #contactForm .btn-primary',
       snapshot: 'body',
+      resolution: 1.0, // default 2.0 is unnecessarily sharp for small buttons
       refraction: 0.045,
-      aberration: 0.04,
+      aberration: 0, // was 0.04 — caused a visible rainbow-fringe glitch at rounded corners
       bevelDepth: 0.12,
       bevelWidth: 0.2,
       frost: 0,

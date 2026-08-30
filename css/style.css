@@ -72,7 +72,6 @@ p { color: var(--ink-dim); }
   display: inline-flex;
   align-items: center;
   gap: 8px;
-  padding: 14px 28px;
   font-size: 0.85rem;
   font-weight: 600;
   letter-spacing: 0.04em;
@@ -81,6 +80,14 @@ p { color: var(--ink-dim); }
   transition: all 0.35s var(--ease);
   white-space: nowrap;
 }
+/* .btn-primary/.btn-outline carry padding on this inner label, not on
+   .btn itself: liquidGL sets pointer-events:none on whatever it targets,
+   so the label is what actually needs to be clickable — and it must
+   cover the full padded box, or the padding ring around the text becomes
+   a dead zone where clicks silently do nothing. .btn-ghost has no label
+   and keeps its own padding override below, unaffected. */
+.btn-primary, .btn-outline { padding: 0; }
+.btn-label { display: inline-flex; align-items: center; gap: 8px; padding: 14px 28px; pointer-events: auto; }
 .btn-primary {
   background: linear-gradient(180deg, rgba(255,255,255,0.22), rgba(255,255,255,0.08));
   backdrop-filter: var(--glass-blur);
