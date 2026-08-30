@@ -485,7 +485,12 @@ section { padding: 120px 0; }
 .process-step p { font-size: 0.88rem; }
 
 /* ============ CTA / CONTACT ============ */
-.cta { background: var(--bg-alt); border-top: 1px solid var(--line); }
+.cta {
+  background:
+    linear-gradient(rgba(10,10,11,0.45), rgba(10,10,11,0.6)),
+    url('../assets/img/portfolio/pb-05.webp') center 30% / cover no-repeat;
+  border-top: 1px solid var(--line);
+}
 .cta-inner { text-align: center; }
 .cta h2 { color: var(--ink); margin-bottom: 16px; }
 .cta-sub { max-width: 480px; margin: 0 auto 48px; }
