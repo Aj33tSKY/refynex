@@ -20,17 +20,30 @@ document.addEventListener('DOMContentLoaded', () => {
   onScroll();
 
   /*
-   * Real liquid-glass refraction (backdrop-filter: url(#svg-filter)) only
-   * renders correctly in Chromium engines — Safari and Firefox parse the
-   * declaration but don't feed real backdrop pixels into the SVG filter,
-   * so it silently no-ops there. Rather than risk a broken/blurless bar,
-   * we only opt in on Chromium and leave everyone else on the plain
-   * blur+saturate glass already set in CSS. "Chrome" appears in the UA
-   * string of every Chromium-based browser (Chrome, Edge, Opera, Brave,
-   * Arc) for legacy compat, and never in Safari's or Firefox's.
+   * Real liquid-glass refraction via liquidGL (vendored, js/liquidgl.js —
+   * MIT, https://github.com/naughtyduk/liquidGL). It renders its own
+   * WebGL lens over each target, sampling actual pixels from its own
+   * snapshot (including live video frames) rather than relying on
+   * backdrop-filter, which does not work at all: Chrome's backdrop-filter
+   * cannot read a <video> element's composited layer, and referencing a
+   * custom SVG filter from backdrop-filter is inconsistently supported
+   * even for non-video content. Every .btn-primary keeps its own CSS
+   * (background/border/box-shadow/blur) as the fallback for browsers
+   * without WebGL — liquidGL enhances it, it doesn't replace it.
    */
-  if (/Chrome/.test(navigator.userAgent)) {
-    document.documentElement.classList.add('supports-glass-refraction');
+  if (typeof liquidGL === 'function') {
+    liquidGL({
+      target: '.btn-primary',
+      snapshot: 'body',
+      refraction: 0.045,
+      aberration: 0.04,
+      bevelDepth: 0.12,
+      bevelWidth: 0.2,
+      frost: 0,
+      shadow: true,
+      specular: true,
+      reveal: 'none',
+    });
   }
 
   /* Mobile menu */
@@ -108,6 +121,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const form = document.getElementById('contactForm');
   const formNote = document.getElementById('formNote');
   const submitBtn = form.querySelector('button[type="submit"]');
+  const submitBtnLabel = submitBtn.querySelector('.btn-label') || submitBtn;
 
   form.addEventListener('submit', async (e) => {
     e.preventDefault();
@@ -117,7 +131,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const message = form.message.value.trim();
 
     submitBtn.disabled = true;
-    submitBtn.textContent = 'Sending…';
+    submitBtnLabel.textContent = 'Sending…';
     formNote.textContent = '';
 
     try {
@@ -138,7 +152,7 @@ document.addEventListener('DOMContentLoaded', () => {
       formNote.textContent = 'Something went wrong — please email hello@refynelabs.co.uk directly.';
     } finally {
       submitBtn.disabled = false;
-      submitBtn.textContent = 'Send Message';
+      submitBtnLabel.textContent = 'Send Message';
     }
   });
 

@@ -82,7 +82,7 @@ p { color: var(--ink-dim); }
   white-space: nowrap;
 }
 .btn-primary {
-  background: linear-gradient(180deg, rgba(217,79,48,0.92), rgba(196,64,36,0.82));
+  background: linear-gradient(180deg, rgba(255,255,255,0.22), rgba(255,255,255,0.08));
   backdrop-filter: var(--glass-blur);
   -webkit-backdrop-filter: var(--glass-blur);
   border: 1px solid rgba(255,255,255,0.25);
@@ -113,6 +113,12 @@ p { color: var(--ink-dim); }
 }
 .btn-ghost { color: var(--ink); border-bottom: 1px solid var(--ink); border-radius: 0; padding: 4px 0; }
 .btn-ghost:hover { color: var(--accent); border-color: var(--accent); }
+
+/* liquidGL sets pointer-events:none on its target (.btn-primary itself) by
+   design — it expects interactive content as a child. This re-enables
+   hit-testing on the label so the button stays clickable; the click still
+   bubbles up to trigger the <a>/<button>'s own default action. */
+.btn-label { pointer-events: auto; }
 
 /* ============ CURSOR ============ */
 .cursor-dot {
@@ -166,30 +172,6 @@ p { color: var(--ink-dim); }
   padding: 14px 0;
   border-bottom-color: var(--glass-border);
   box-shadow: inset 0 1px 0 rgba(255,255,255,0.08), 0 8px 30px rgba(0,0,0,0.2);
-}
-/*
- * Real edge-refraction glass, Chromium only (see js/main.js feature
- * detection). Deliberately scoped to compact, self-contained elements
- * only — a full-width bar shares a hard boundary with whatever large,
- * high-contrast content scrolls behind it (e.g. the hero headline),
- * and displacing that edge produces a jagged tear rather than a lens.
- * Small buttons sit over softer backgrounds and stay clean.
- */
-.supports-glass-refraction .btn-primary {
-  /* A near-opaque fill leaves nothing for the backdrop filter to bend —
-     lower it so real refraction is actually visible. Only done here,
-     since browsers without refraction get no payoff for the tradeoff
-     and keep the vibrant solid orange instead. */
-  background: linear-gradient(180deg, rgba(217,79,48,0.22), rgba(196,64,36,0.14));
-  backdrop-filter: url(#glass-distortion);
-  /* Chrome only routes backdrop-filter through its GPU filter path (the
-     one that actually evaluates a referenced SVG filter) when the
-     element is already promoted to its own composited layer — force
-     that promotion, or hardware-accelerated Chrome silently falls back
-     to just the plain blur/saturate/brightness and drops the url(). */
-  transform: translateZ(0);
-  will-change: backdrop-filter, transform;
-  isolation: isolate;
 }
 .header-inner {
   max-width: var(--container);
@@ -485,12 +467,7 @@ section { padding: 120px 0; }
 .process-step p { font-size: 0.88rem; }
 
 /* ============ CTA / CONTACT ============ */
-.cta {
-  background:
-    linear-gradient(rgba(10,10,11,0.45), rgba(10,10,11,0.6)),
-    url('../assets/img/portfolio/pb-05.webp') center 30% / cover no-repeat;
-  border-top: 1px solid var(--line);
-}
+.cta { background: var(--bg-alt); border-top: 1px solid var(--line); }
 .cta-inner { text-align: center; }
 .cta h2 { color: var(--ink); margin-bottom: 16px; }
 .cta-sub { max-width: 480px; margin: 0 auto 48px; }
