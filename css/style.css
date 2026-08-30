@@ -181,7 +181,7 @@ p { color: var(--ink-dim); }
      since browsers without refraction get no payoff for the tradeoff
      and keep the vibrant solid orange instead. */
   background: linear-gradient(180deg, rgba(217,79,48,0.22), rgba(196,64,36,0.14));
-  backdrop-filter: url(#glass-distortion) blur(6px) saturate(160%) brightness(1.05);
+  backdrop-filter: url(#glass-distortion);
   /* Chrome only routes backdrop-filter through its GPU filter path (the
      one that actually evaluates a referenced SVG filter) when the
      element is already promoted to its own composited layer — force
