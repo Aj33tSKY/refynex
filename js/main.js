@@ -50,21 +50,32 @@ document.addEventListener('DOMContentLoaded', () => {
      * transform runs — so scaling the title visually afterward can't
      * un-clip content that already overflowed at layout time. Reducing
      * the actual font-size does affect layout width, so that's what
-     * actually fixes it. Only kicks in for the phrase(s) that need it.
+     * actually fixes it.
+     *
+     * The fit is computed ONCE (per viewport) against the *longest*
+     * phrase, then held fixed across every rotation — sizing per-phrase
+     * would make short words snap back to a larger size than long ones,
+     * producing a jarring size jump on every rotation.
      */
     const heroTitle = document.querySelector('.hero-title');
     const heroTitleLine2 = heroTitle ? heroTitle.querySelectorAll('span.reveal')[1] : null;
     function fitHeroTitle() {
       if (!heroTitle || !heroTitleLine2) return;
-      // Reset first so both measurements below reflect the CSS clamp()
-      // value for the *current* viewport, not a stale shrunk-down size
-      // left over from a previous (possibly wider) viewport/phrase.
+      // Reset first so measurement reflects the CSS clamp() value for
+      // the *current* viewport, not a stale shrunk-down size left over
+      // from a previous (possibly wider) viewport.
       heroTitle.style.fontSize = '';
       const baseFontSize = parseFloat(getComputedStyle(heroTitle).fontSize);
       const available = heroTitleLine2.clientWidth;
-      const needed = heroTitleLine2.scrollWidth;
-      if (needed > available) {
-        heroTitle.style.fontSize = (baseFontSize * (available / needed) * 0.98) + 'px';
+      const originalText = heroRotateText.textContent;
+      let maxNeeded = 0;
+      phrases.forEach(phrase => {
+        heroRotateText.textContent = phrase;
+        maxNeeded = Math.max(maxNeeded, heroTitleLine2.scrollWidth);
+      });
+      heroRotateText.textContent = originalText;
+      if (maxNeeded > available) {
+        heroTitle.style.fontSize = (baseFontSize * (available / maxNeeded) * 0.98) + 'px';
       }
     }
     fitHeroTitle();
@@ -87,8 +98,7 @@ document.addEventListener('DOMContentLoaded', () => {
         void heroRotateText.offsetWidth;
         heroRotateText.style.transition = '';
         heroRotateText.classList.remove('rotate-in-from-right');
-        fitHeroTitle();
-      }, 900);
+      }, 1100);
     }, 3000);
   }
 

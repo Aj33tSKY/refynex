@@ -292,10 +292,10 @@ p { color: var(--ink-dim); }
 .hero-title .hero-rotate-text {
   display: inline-block;
   white-space: nowrap;
-  transition: transform 0.9s var(--ease), opacity 0.9s var(--ease);
+  transition: transform 1.1s var(--ease), opacity 1.1s var(--ease);
 }
-.hero-rotate-text.rotate-out { transform: translateX(-100%); opacity: 0; }
-.hero-rotate-text.rotate-in-from-right { transform: translateX(100%); opacity: 0; }
+.hero-rotate-text.rotate-out { transform: translateX(-18px); opacity: 0; }
+.hero-rotate-text.rotate-in-from-right { transform: translateX(18px); opacity: 0; }
 
 .hero-sub {
   max-width: 480px;
