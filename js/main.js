@@ -39,24 +39,57 @@ document.addEventListener('DOMContentLoaded', () => {
   if (heroRotateText) {
     const phrases = ['big launch', 'brand film', 'product demo', 'founder showcase', 'big event'];
     let phraseIndex = 0;
+
+    /*
+     * "founder showcase" is meaningfully longer than the other phrases —
+     * at the hero's large font-size it can overflow past the right edge
+     * instead of wrapping (the line is nowrap so the rotating word never
+     * breaks awkwardly mid-word). The line itself is a fixed-width block
+     * with overflow:hidden (needed for the reveal-on-load slide-up
+     * animation), and that clip boundary is set by layout, before any
+     * transform runs — so scaling the title visually afterward can't
+     * un-clip content that already overflowed at layout time. Reducing
+     * the actual font-size does affect layout width, so that's what
+     * actually fixes it. Only kicks in for the phrase(s) that need it.
+     */
+    const heroTitle = document.querySelector('.hero-title');
+    const heroTitleLine2 = heroTitle ? heroTitle.querySelectorAll('span.reveal')[1] : null;
+    function fitHeroTitle() {
+      if (!heroTitle || !heroTitleLine2) return;
+      // Reset first so both measurements below reflect the CSS clamp()
+      // value for the *current* viewport, not a stale shrunk-down size
+      // left over from a previous (possibly wider) viewport/phrase.
+      heroTitle.style.fontSize = '';
+      const baseFontSize = parseFloat(getComputedStyle(heroTitle).fontSize);
+      const available = heroTitleLine2.clientWidth;
+      const needed = heroTitleLine2.scrollWidth;
+      if (needed > available) {
+        heroTitle.style.fontSize = (baseFontSize * (available / needed) * 0.98) + 'px';
+      }
+    }
+    fitHeroTitle();
+    window.addEventListener('resize', fitHeroTitle);
+
     setInterval(() => {
       heroRotateText.classList.add('rotate-out');
       setTimeout(() => {
         phraseIndex = (phraseIndex + 1) % phrases.length;
         heroRotateText.textContent = phrases[phraseIndex];
-        // Snap to the "entering from below" position with no transition,
-        // force a reflow so the browser registers it, then re-enable the
-        // transition and remove the class — animating back to the
-        // resting state. Without the reflow the browser would batch this
-        // with the rotate-out removal and skip straight to the end state.
+        // Snap to the "entering from the right" position with no
+        // transition, force a reflow so the browser registers it, then
+        // re-enable the transition and remove the class — animating
+        // back to the resting state. Without the reflow the browser
+        // would batch this with the rotate-out removal and skip
+        // straight to the end state.
         heroRotateText.style.transition = 'none';
         heroRotateText.classList.remove('rotate-out');
-        heroRotateText.classList.add('rotate-in-from-bottom');
+        heroRotateText.classList.add('rotate-in-from-right');
         void heroRotateText.offsetWidth;
         heroRotateText.style.transition = '';
-        heroRotateText.classList.remove('rotate-in-from-bottom');
-      }, 450);
-    }, 2000);
+        heroRotateText.classList.remove('rotate-in-from-right');
+        fitHeroTitle();
+      }, 900);
+    }, 3000);
   }
 
   /* Mobile menu */
