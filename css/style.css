@@ -290,12 +290,6 @@ p { color: var(--ink-dim); }
 .hero-video {
   width: 100%; height: 100%;
   object-fit: cover;
-}
-/* Sits on top of .hero-video; js/main.js draws mirrored frames into it
-   every rAF tick. Ordinary bitmap, so backdrop-filter can read it. */
-.hero-video-canvas {
-  position: absolute; inset: 0;
-  width: 100%; height: 100%;
   filter: grayscale(0.15) contrast(1.05);
 }
 .hero-overlay {

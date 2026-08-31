@@ -96,19 +96,6 @@
         <source src="assets/video/reel4.webm" type="video/webm">
         <source src="assets/video/reel4.mp4" type="video/mp4">
       </video>
-      <!--
-        Mirrored onto a canvas every frame (js/main.js) so glass buttons
-        over the hero can read it via backdrop-filter. Chromium composites
-        <video> through a hardware-overlay fast path for in-context
-        elements that backdrop-filter can't sample from — confirmed by a
-        fixed-position button elsewhere on the page (outside the video's
-        stacking context) refracting correctly while an in-context one
-        didn't. A canvas is an ordinary bitmap, so it sidesteps that
-        entirely. Sits on top of the video and stays transparent until JS
-        starts drawing, so the real video still shows through as a
-        no-JS/failure fallback.
-      -->
-      <canvas class="hero-video-canvas" id="heroVideoCanvas" aria-hidden="true"></canvas>
       <div class="hero-overlay"></div>
     </div>
 
