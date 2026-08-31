@@ -39,6 +39,53 @@ document.addEventListener('DOMContentLoaded', () => {
   if (heroRotateText) {
     const phrases = ['big launch', 'brand film', 'product demo', 'founder showcase', 'big event'];
     let phraseIndex = 0;
+    let currentWord = phrases[0];
+
+    // Per-character opacity wave (as seen on poly.ai's hero): each
+    // letter fades independently, no sliding/blur. Exiting letters fade
+    // out back-to-front (last letter first), incoming letters fade in
+    // front-to-back (first letter first) — both waves travel the same
+    // left-to-right direction, so exit reads as an erase and entry as a
+    // type-in. Timed dynamically per word length so longer phrases
+    // don't rush and shorter ones don't drag.
+    const CHAR_DURATION = 320; // ms, each letter's own opacity transition
+    const CHAR_STAGGER = 20;   // ms, delay step between adjacent letters
+
+    function renderChars(word, initialOpacity) {
+      heroRotateText.innerHTML = '';
+      const frag = document.createDocumentFragment();
+      Array.from(word).forEach(ch => {
+        const span = document.createElement('span');
+        span.className = 'hero-rotate-char';
+        span.textContent = ch === ' ' ? ' ' : ch;
+        span.style.transitionDelay = '0ms';
+        span.style.opacity = String(initialOpacity);
+        frag.appendChild(span);
+      });
+      heroRotateText.appendChild(frag);
+    }
+    renderChars(currentWord, 1);
+
+    function exitWord(callback) {
+      const chars = Array.from(heroRotateText.children);
+      const n = chars.length;
+      chars.forEach((span, i) => {
+        span.style.transitionDelay = ((n - 1 - i) * CHAR_STAGGER) + 'ms';
+        span.style.opacity = '0';
+      });
+      setTimeout(callback, (n - 1) * CHAR_STAGGER + CHAR_DURATION);
+    }
+
+    function enterWord(word) {
+      currentWord = word;
+      renderChars(word, 0);
+      const chars = Array.from(heroRotateText.children);
+      void heroRotateText.offsetWidth; // commit opacity:0 before transitioning to 1
+      chars.forEach((span, i) => {
+        span.style.transitionDelay = (i * CHAR_STAGGER) + 'ms';
+        span.style.opacity = '1';
+      });
+    }
 
     /*
      * "founder showcase" is meaningfully longer than the other phrases —
@@ -67,38 +114,24 @@ document.addEventListener('DOMContentLoaded', () => {
       heroTitle.style.fontSize = '';
       const baseFontSize = parseFloat(getComputedStyle(heroTitle).fontSize);
       const available = heroTitleLine2.clientWidth;
-      const originalText = heroRotateText.textContent;
       let maxNeeded = 0;
       phrases.forEach(phrase => {
         heroRotateText.textContent = phrase;
         maxNeeded = Math.max(maxNeeded, heroTitleLine2.scrollWidth);
       });
-      heroRotateText.textContent = originalText;
       if (maxNeeded > available) {
         heroTitle.style.fontSize = (baseFontSize * (available / maxNeeded) * 0.98) + 'px';
       }
+      renderChars(currentWord, 1);
     }
     fitHeroTitle();
     window.addEventListener('resize', fitHeroTitle);
 
     setInterval(() => {
-      heroRotateText.classList.add('rotate-out');
-      setTimeout(() => {
+      exitWord(() => {
         phraseIndex = (phraseIndex + 1) % phrases.length;
-        heroRotateText.textContent = phrases[phraseIndex];
-        // Snap to the "entering from the right" position with no
-        // transition, force a reflow so the browser registers it, then
-        // re-enable the transition and remove the class — animating
-        // back to the resting state. Without the reflow the browser
-        // would batch this with the rotate-out removal and skip
-        // straight to the end state.
-        heroRotateText.style.transition = 'none';
-        heroRotateText.classList.remove('rotate-out');
-        heroRotateText.classList.add('rotate-in-from-right');
-        void heroRotateText.offsetWidth;
-        heroRotateText.style.transition = '';
-        heroRotateText.classList.remove('rotate-in-from-right');
-      }, 1100);
+        enterWord(phrases[phraseIndex]);
+      });
     }, 3000);
   }
 
