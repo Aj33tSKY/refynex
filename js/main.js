@@ -222,10 +222,10 @@ document.addEventListener('DOMContentLoaded', () => {
         formNote.textContent = "Thanks — your message is on its way. We'll get back to you as soon as possible.";
         form.reset();
       } else {
-        formNote.textContent = data.error || 'Something went wrong — please email hello@refynelabs.co.uk directly.';
+        formNote.textContent = data.error || 'Something went wrong — please email launch@refynelabs.co.uk directly.';
       }
     } catch (err) {
-      formNote.textContent = 'Something went wrong — please email hello@refynelabs.co.uk directly.';
+      formNote.textContent = 'Something went wrong — please email launch@refynelabs.co.uk directly.';
     } finally {
       submitBtn.disabled = false;
       submitBtnLabel.textContent = 'Send Message';

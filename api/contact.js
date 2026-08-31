@@ -27,7 +27,7 @@ export default async function handler(req, res) {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        from: 'Refynelabs <hello@refynelabs.co.uk>',
+        from: 'Refynelabs <launch@refynelabs.co.uk>',
         to: ['ajeet@refynelabs.co.uk'],
         reply_to: email,
         subject: `New project inquiry from ${name}`,
@@ -50,7 +50,7 @@ export default async function handler(req, res) {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          from: 'Refynelabs <hello@refynelabs.co.uk>',
+          from: 'Refynelabs <launch@refynelabs.co.uk>',
           to: [email],
           reply_to: 'ajeet@refynelabs.co.uk',
           subject: "We've received your message — Refynelabs",
