@@ -261,7 +261,15 @@ document.addEventListener('DOMContentLoaded', () => {
       heroWorkBtnProxy.style.height = r.height + 'px';
       heroWorkBtnProxy.style.transform = `translate(${r.left}px, ${r.top}px)`;
     }
+    // Recomputing the SVG displacement filter at a new position every
+    // scroll frame is expensive enough to visibly lag — swap to the
+    // cheap plain-blur fallback for the duration of active scrolling
+    // and restore the real refraction ~150ms after scrolling settles.
+    let scrollStopTimer = null;
     function scheduleSync() {
+      heroWorkBtnProxy.classList.add('is-scrolling');
+      clearTimeout(scrollStopTimer);
+      scrollStopTimer = setTimeout(() => heroWorkBtnProxy.classList.remove('is-scrolling'), 150);
       if (!proxySyncScheduled) {
         proxySyncScheduled = true;
         requestAnimationFrame(syncHeroCtaProxy);
