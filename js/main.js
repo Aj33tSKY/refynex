@@ -181,13 +181,58 @@ document.addEventListener('DOMContentLoaded', () => {
 
   document.querySelectorAll('[data-animate]').forEach(el => observer.observe(el));
 
-  /* Pause hero video when scrolled out of view (saves CPU/battery) */
+  /*
+   * Mirror the hero video onto a canvas every frame so glass buttons
+   * over it can actually read it via backdrop-filter — Chromium
+   * composites in-context <video> through a hardware-overlay path that
+   * backdrop-filter can't sample (confirmed: a fixed-position button
+   * elsewhere on the page, outside the video's stacking context,
+   * refracts it fine; an in-context one over the same video doesn't).
+   * A canvas is a normal bitmap, so this sidesteps the problem outright.
+   */
   const heroVideo = document.getElementById('heroVideo');
+  const heroCanvas = document.getElementById('heroVideoCanvas');
+  let drawHeroFrame = null;
+  let heroRafId = null;
+
+  if (heroVideo && heroCanvas) {
+    const ctx = heroCanvas.getContext('2d');
+
+    function resizeHeroCanvas() {
+      const rect = heroCanvas.getBoundingClientRect();
+      const dpr = Math.min(window.devicePixelRatio || 1, 2);
+      heroCanvas.width = Math.round(rect.width * dpr);
+      heroCanvas.height = Math.round(rect.height * dpr);
+    }
+    resizeHeroCanvas();
+    window.addEventListener('resize', resizeHeroCanvas);
+
+    drawHeroFrame = () => {
+      if (heroVideo.readyState >= 2 && heroVideo.videoWidth) {
+        const cw = heroCanvas.width, ch = heroCanvas.height;
+        const vw = heroVideo.videoWidth, vh = heroVideo.videoHeight;
+        // object-fit: cover math — canvas has no native equivalent.
+        const scale = Math.max(cw / vw, ch / vh);
+        const dw = vw * scale, dh = vh * scale;
+        const dx = (cw - dw) / 2, dy = (ch - dh) / 2;
+        ctx.drawImage(heroVideo, dx, dy, dw, dh);
+      }
+      heroRafId = requestAnimationFrame(drawHeroFrame);
+    };
+    drawHeroFrame();
+  }
+
+  /* Pause hero video (and its canvas mirror) when scrolled out of view */
   if (heroVideo) {
     const videoObserver = new IntersectionObserver((entries) => {
       entries.forEach(entry => {
-        if (entry.isIntersecting) heroVideo.play().catch(() => {});
-        else heroVideo.pause();
+        if (entry.isIntersecting) {
+          heroVideo.play().catch(() => {});
+          if (drawHeroFrame && !heroRafId) drawHeroFrame();
+        } else {
+          heroVideo.pause();
+          if (heroRafId) { cancelAnimationFrame(heroRafId); heroRafId = null; }
+        }
       });
     }, { threshold: 0.1 });
     videoObserver.observe(heroVideo);
