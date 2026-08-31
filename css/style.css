@@ -146,11 +146,9 @@ p { color: var(--ink-dim); }
   display: flex; align-items: center; justify-content: center;
   transition: opacity 0.6s var(--ease), visibility 0.6s;
 }
-.preloader span {
-  font-family: var(--ff-display);
-  font-size: 2.5rem;
-  letter-spacing: 0.1em;
-  color: var(--ink);
+.preloader img {
+  height: 36px;
+  width: auto;
   opacity: 0;
   animation: fadePulse 1.2s var(--ease) forwards;
 }

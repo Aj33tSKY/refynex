@@ -27,7 +27,7 @@ export default async function handler(req, res) {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        from: 'Refyne Labs <hello@refynelabs.co.uk>',
+        from: 'Refynelabs <hello@refynelabs.co.uk>',
         to: ['ajeet@refynelabs.co.uk'],
         reply_to: email,
         subject: `New project inquiry from ${name}`,
@@ -50,11 +50,11 @@ export default async function handler(req, res) {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          from: 'Refyne Labs <hello@refynelabs.co.uk>',
+          from: 'Refynelabs <hello@refynelabs.co.uk>',
           to: [email],
           reply_to: 'ajeet@refynelabs.co.uk',
-          subject: "We've received your message — Refyne Labs",
-          text: `Hi ${name},\n\nThanks for reaching out to Refyne Labs. We've received your message and will get back to you as soon as possible.\n\nYour message:\n${message}\n\n— Refyne Labs`,
+          subject: "We've received your message — Refynelabs",
+          text: `Hi ${name},\n\nThanks for reaching out to Refynelabs. We've received your message and will get back to you as soon as possible.\n\nYour message:\n${message}\n\n— Refynelabs`,
         }),
       });
       if (!confirmRes.ok) {
