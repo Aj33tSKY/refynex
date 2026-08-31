@@ -137,7 +137,7 @@
         Capture the narrative, frame your growth.
       </p>
       <div class="hero-actions reveal">
-        <a href="#work" class="btn btn-primary"><span class="btn-label">View Our Work</span></a>
+        <a href="#work" class="btn btn-primary" id="heroWorkBtn"><span class="btn-label">View Our Work</span></a>
         <a href="#contact" class="btn btn-ghost">Start a Project →</a>
       </div>
     </div>
@@ -405,6 +405,16 @@
     <p>&copy; <span id="year"></span> Refynelabs. All rights reserved.</p>
   </div>
 </footer>
+
+<!--
+  Decorative visual stand-in for #heroWorkBtn, positioned outside the
+  hero's DOM/stacking context (see js/main.js) so the SVG glass
+  refraction actually renders — matching the one structural trait every
+  working glass element on this page shares and the hero button alone
+  lacked. Purely visual: aria-hidden, unfocusable, clicks pass through
+  to the real button underneath, which JS keeps functionally in place.
+-->
+<a href="#work" class="btn btn-primary hero-cta-proxy" id="heroWorkBtnProxy" aria-hidden="true" tabindex="-1"><span class="btn-label">View Our Work</span></a>
 
 <script src="js/main.js"></script>
 </body>

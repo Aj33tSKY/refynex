@@ -238,6 +238,54 @@ document.addEventListener('DOMContentLoaded', () => {
     videoObserver.observe(heroVideo);
   }
 
+  /*
+   * Every glass-refraction element that actually works sits outside the
+   * hero section's DOM/stacking context; the in-hero "View Our Work"
+   * button never has, across several different attempted fixes. Rather
+   * than keep guessing at the hero's internal structure, #heroWorkBtn
+   * stays the real, functional, focusable button, and a decorative
+   * proxy living outside the hero (#heroWorkBtnProxy, position: fixed)
+   * is kept pixel-synced to it and does the actual visual rendering —
+   * matching the one structural trait every working case shares.
+   * pointer-events: none on the proxy means clicks always reach the
+   * real button underneath.
+   */
+  const heroWorkBtn = document.getElementById('heroWorkBtn');
+  const heroWorkBtnProxy = document.getElementById('heroWorkBtnProxy');
+  if (heroWorkBtn && heroWorkBtnProxy && document.documentElement.classList.contains('supports-glass-refraction')) {
+    let proxySyncScheduled = false;
+    function syncHeroCtaProxy() {
+      proxySyncScheduled = false;
+      const r = heroWorkBtn.getBoundingClientRect();
+      heroWorkBtnProxy.style.width = r.width + 'px';
+      heroWorkBtnProxy.style.height = r.height + 'px';
+      heroWorkBtnProxy.style.transform = `translate(${r.left}px, ${r.top}px)`;
+    }
+    function scheduleSync() {
+      if (!proxySyncScheduled) {
+        proxySyncScheduled = true;
+        requestAnimationFrame(syncHeroCtaProxy);
+      }
+    }
+    // pointer-events:none on the proxy means it can never receive real
+    // :hover/:focus itself — the real (invisible) button does, so
+    // forward both states across as classes.
+    heroWorkBtn.addEventListener('mouseenter', () => heroWorkBtnProxy.classList.add('is-hover'));
+    heroWorkBtn.addEventListener('mouseleave', () => heroWorkBtnProxy.classList.remove('is-hover'));
+    heroWorkBtn.addEventListener('focus', () => heroWorkBtnProxy.classList.add('is-focus'));
+    heroWorkBtn.addEventListener('blur', () => heroWorkBtnProxy.classList.remove('is-focus'));
+
+    // Delayed so the real button's own reveal-on-load animation
+    // (.hero-actions.reveal) plays fully visible before the swap.
+    setTimeout(() => {
+      syncHeroCtaProxy();
+      heroWorkBtnProxy.classList.add('active');
+      heroWorkBtn.classList.add('cta-proxied');
+      window.addEventListener('scroll', scheduleSync, { passive: true });
+      window.addEventListener('resize', scheduleSync);
+    }, 1700);
+  }
+
   /* Contact form */
   const form = document.getElementById('contactForm');
   const formNote = document.getElementById('formNote');

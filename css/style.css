@@ -93,7 +93,10 @@ p { color: var(--ink-dim); }
   box-shadow: inset 0 1px 0 rgba(255,255,255,0.16), 0 4px 16px rgba(0,0,0,0.2);
   color: #fff;
 }
-.btn-primary:hover {
+/* .hero-cta-proxy.is-hover is JS-driven (see main.js) — the proxy has
+   pointer-events:none so it can never receive real :hover itself; the
+   real #heroWorkBtn underneath does, and forwards it here. */
+.btn-primary:hover, .hero-cta-proxy.is-hover {
   background: var(--glass-bg-strong);
   border-color: rgba(255,255,255,0.35);
   box-shadow: inset 0 1px 0 rgba(255,255,255,0.3), 0 6px 20px rgba(0,0,0,0.25);
@@ -133,11 +136,34 @@ p { color: var(--ink-dim); }
   will-change: backdrop-filter, transform;
   isolation: isolate;
 }
-/* Hero button gets the stronger distortion variant (higher specificity
-   than the rule above so it wins). */
-.supports-glass-refraction .hero-actions .btn-primary {
+/* Decorative proxy for the hero button (see index.html) gets the
+   stronger distortion variant (higher specificity than the rule above
+   so it wins). */
+.supports-glass-refraction #heroWorkBtnProxy {
   backdrop-filter: url(#glass-distortion-strong);
 }
+
+/*
+ * The real hero button (#heroWorkBtn) is functionally real — focusable,
+ * clickable, screen-reader visible — but visually replaced by
+ * #heroWorkBtnProxy once JS confirms the proxy is synced and in place.
+ * Only applied via a JS-added class so a JS failure never leaves the
+ * button invisible with no working stand-in.
+ */
+#heroWorkBtn.cta-proxied { opacity: 0; }
+
+.hero-cta-proxy {
+  position: fixed;
+  top: 0; left: 0;
+  margin: 0;
+  pointer-events: none;
+  z-index: 500;
+  display: none;
+}
+.hero-cta-proxy.active { display: inline-flex; }
+/* Keyboard focus ring, forwarded from the invisible real button by JS
+   (an opacity:0 element's own focus ring would be invisible too). */
+.hero-cta-proxy.is-focus { outline: 2px solid #fff; outline-offset: 3px; }
 
 /* ============ PRELOADER ============ */
 .preloader {
