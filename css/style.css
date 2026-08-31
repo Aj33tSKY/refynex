@@ -183,12 +183,8 @@ p { color: var(--ink-dim); }
   gap: 24px;
 }
 
-.logo {
-  font-family: var(--ff-display);
-  font-size: 1.6rem;
-  letter-spacing: 0.02em;
-}
-.logo span { color: var(--accent); }
+.logo { display: inline-flex; align-items: center; }
+.logo img { height: 28px; width: auto; display: block; }
 
 .main-nav { display: flex; gap: 36px; }
 .main-nav a {
