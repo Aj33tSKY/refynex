@@ -123,13 +123,14 @@ p { color: var(--ink-dim); }
 
 /*
  * Real edge-refraction glass, Chromium only (js/main.js feature
- * detection). Scoped to elements confirmed to render cleanly over
- * static backgrounds — NOT the hero button (over the playing video —
- * Chrome's backdrop-filter cannot read a <video> layer at all) and NOT
- * the sticky header (a full-width bar sharing a hard boundary with
- * large scrolling text produced a jagged tear when tested).
+ * detection). The header's .btn-outline sits over the same playing
+ * hero video and refracts correctly, so a bare <video> backdrop isn't
+ * actually the blocker it was once assumed to be — applied to all glass
+ * buttons now. Still NOT the sticky header bar itself (a full-width bar
+ * sharing a hard boundary with large scrolling text produced a jagged
+ * tear when tested).
  */
-.supports-glass-refraction #contactForm .btn-primary,
+.supports-glass-refraction .btn-primary,
 .supports-glass-refraction .btn-outline,
 .supports-glass-refraction .filter-btn,
 .supports-glass-refraction .service-card {
