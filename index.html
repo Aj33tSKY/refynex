@@ -42,6 +42,21 @@
         <feFuncB type="linear" slope="1.05"/>
       </feComponentTransfer>
     </filter>
+    <!-- Stronger variant for the hero button only — same recipe, higher
+         displacement scale and less noise-smoothing for a more visibly
+         liquid, jagged-edged refraction. -->
+    <filter id="glass-distortion-strong" x="-30%" y="-30%" width="160%" height="160%" color-interpolation-filters="sRGB">
+      <feTurbulence type="fractalNoise" baseFrequency="0.014 0.026" numOctaves="2" seed="17" result="noise"/>
+      <feGaussianBlur in="noise" stdDeviation="5" result="smoothNoise"/>
+      <feDisplacementMap in="SourceGraphic" in2="smoothNoise" scale="190" xChannelSelector="R" yChannelSelector="G" result="displaced"/>
+      <feGaussianBlur in="displaced" stdDeviation="1.5" result="softened"/>
+      <feColorMatrix in="softened" type="saturate" values="1.6" result="saturated"/>
+      <feComponentTransfer in="saturated">
+        <feFuncR type="linear" slope="1.05"/>
+        <feFuncG type="linear" slope="1.05"/>
+        <feFuncB type="linear" slope="1.05"/>
+      </feComponentTransfer>
+    </filter>
   </defs>
 </svg>
 

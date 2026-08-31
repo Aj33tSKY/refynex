@@ -133,6 +133,11 @@ p { color: var(--ink-dim); }
   will-change: backdrop-filter, transform;
   isolation: isolate;
 }
+/* Hero button gets the stronger distortion variant (higher specificity
+   than the rule above so it wins). */
+.supports-glass-refraction .hero-actions .btn-primary {
+  backdrop-filter: url(#glass-distortion-strong);
+}
 
 /* ============ PRELOADER ============ */
 .preloader {
