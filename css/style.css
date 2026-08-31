@@ -291,7 +291,7 @@ p { color: var(--ink-dim); }
   display: inline-block;
   white-space: nowrap;
 }
-.hero-rotate-char {
+.hero-title .hero-rotate-char {
   display: inline-block;
   white-space: pre;
   opacity: 1;
