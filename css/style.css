@@ -249,7 +249,17 @@ p { color: var(--ink-dim); }
   align-items: flex-end;
   overflow: hidden;
 }
-.hero-media { position: absolute; inset: 0; z-index: 0; }
+.hero-media {
+  position: absolute; inset: 0; z-index: 0;
+  /* Forces the video off Chromium's hardware-overlay fast path (direct
+     scanout) and onto a normal composited GPU layer. In-context glass
+     buttons over the video can't read pixels via backdrop-filter while
+     it's on the fast path — confirmed working for elements outside this
+     stacking context (the fixed header) and not for ones inside it. */
+  transform: translateZ(0);
+  will-change: transform;
+  isolation: isolate;
+}
 .hero-video {
   width: 100%; height: 100%;
   object-fit: cover;
