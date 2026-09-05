@@ -215,9 +215,34 @@ document.addEventListener('DOMContentLoaded', () => {
 
   document.querySelectorAll('[data-animate]').forEach(el => observer.observe(el));
 
-  /* Pause hero video when scrolled out of view (saves CPU/battery) */
   const heroVideo = document.getElementById('heroVideo');
   if (heroVideo) {
+    /*
+     * Picks and sets the video source here in JS rather than via
+     * <source media="..."> children (see index.html comment) — Safari
+     * (all iOS browsers, WebKit-only) has been confirmed unreliable
+     * about honoring that on <video>, even though it works correctly
+     * under Chromium/Chrome DevTools device emulation. Setting
+     * .src directly always takes priority over any <source> children
+     * per spec, in every browser — a completely different, more
+     * deterministic code path than letting the browser pick.
+     */
+    // Written as 4 explicit static strings (not built up from parts)
+    // so the build step's plain text find/replace (scripts/
+    // fingerprint-assets.js) can find and rewrite each exact path to
+    // its content-hashed filename — a dynamically-assembled string
+    // wouldn't match anything to replace.
+    const isMobile = window.matchMedia('(max-width: 780px)').matches;
+    const canWebm = heroVideo.canPlayType('video/webm') !== '';
+    let heroVideoSrc;
+    if (isMobile && canWebm) heroVideoSrc = 'assets/video/reel5-mobile.webm';
+    else if (isMobile) heroVideoSrc = 'assets/video/reel5-mobile.mp4';
+    else if (canWebm) heroVideoSrc = 'assets/video/reel5-desktop.webm';
+    else heroVideoSrc = 'assets/video/reel5-desktop.mp4';
+    heroVideo.src = heroVideoSrc;
+    heroVideo.load();
+
+    /* Pause hero video when scrolled out of view (saves CPU/battery) */
     const videoObserver = new IntersectionObserver((entries) => {
       entries.forEach(entry => {
         if (entry.isIntersecting) heroVideo.play().catch(() => {});

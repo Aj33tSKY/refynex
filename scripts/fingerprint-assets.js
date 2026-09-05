@@ -11,8 +11,16 @@
  * a file's bytes and its URL changes automatically — no more manually
  * bumping a `?v=` query string and hoping every reference got updated.
  *
- * Source files (index.html, assets/**) are untouched in git; this only
- * rewrites the ephemeral build output Vercel actually deploys.
+ * Source files (index.html, js/main.js, assets/**) are untouched in
+ * git; this only rewrites the ephemeral build output Vercel actually
+ * deploys.
+ *
+ * Rewriting isn't limited to HTML attributes — it's a plain text
+ * find/replace across every file in REWRITE_FILES, so a path referenced
+ * as a JS string literal (e.g. the hero video's src, picked in JS
+ * rather than via a static <source> tag) gets caught too, as long as
+ * it appears as an exact, complete string rather than being built up
+ * from parts at runtime.
  */
 const fs = require('fs');
 const path = require('path');
@@ -20,7 +28,7 @@ const crypto = require('crypto');
 
 const ROOT = path.join(__dirname, '..');
 const ASSETS_DIR = path.join(ROOT, 'assets');
-const HTML_FILES = ['index.html'];
+const REWRITE_FILES = ['index.html', 'js/main.js'];
 const HASH_LENGTH = 10;
 
 // Raw archival uploads (kept for future re-derivation, e.g. re-cropping
@@ -79,24 +87,24 @@ function main() {
   }
 
   let totalReplacements = 0;
-  for (const htmlFile of HTML_FILES) {
-    const htmlPath = path.join(ROOT, htmlFile);
-    let html = fs.readFileSync(htmlPath, 'utf8');
+  for (const rewriteFile of REWRITE_FILES) {
+    const filePath = path.join(ROOT, rewriteFile);
+    let text = fs.readFileSync(filePath, 'utf8');
 
     for (const [oldRel, newRel] of renameMap) {
       // Matches the bare path, optionally followed by a leftover
       // "?v=N" cache-busting query string (which the hash now makes
       // redundant, so it's dropped rather than carried forward).
       const pattern = new RegExp(escapeRegExp(oldRel) + '(\\?v=\\d+)?', 'g');
-      const before = html;
-      html = html.replace(pattern, newRel);
-      if (html !== before) totalReplacements++;
+      const before = text;
+      text = text.replace(pattern, newRel);
+      if (text !== before) totalReplacements++;
     }
 
-    fs.writeFileSync(htmlPath, html);
+    fs.writeFileSync(filePath, text);
   }
 
-  console.log(`Fingerprinted ${renameMap.size} asset file(s), rewrote ${totalReplacements} reference(s) across ${HTML_FILES.length} HTML file(s).`);
+  console.log(`Fingerprinted ${renameMap.size} asset file(s), rewrote ${totalReplacements} reference(s) across ${REWRITE_FILES.length} file(s).`);
   for (const [oldRel, newRel] of renameMap) {
     console.log(`  ${oldRel} -> ${newRel}`);
   }

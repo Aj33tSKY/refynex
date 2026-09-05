@@ -65,6 +65,17 @@
   <!-- HERO -->
   <section class="hero">
     <div class="hero-media">
+      <!--
+        No <source> children here on purpose — Safari (including iOS,
+        every browser app there uses WebKit) is unreliable about
+        honoring <source media="..."> on <video>, confirmed on a real
+        iPhone even though it worked correctly under Chromium/Chrome
+        DevTools device emulation. js/main.js below sets video.src
+        directly instead, which per spec always takes priority over
+        any <source> children regardless of browser — a completely
+        different, deterministic code path. <noscript> covers the
+        no-JS case with a plain desktop source.
+      -->
       <video
         class="hero-video"
         id="heroVideo"
@@ -74,11 +85,13 @@
         playsinline
         preload="auto"
         poster="assets/img/hero-poster.jpg">
-        <source src="assets/video/reel5-mobile.webm" type="video/webm" media="(max-width: 780px)">
-        <source src="assets/video/reel5-mobile.mp4" type="video/mp4" media="(max-width: 780px)">
-        <source src="assets/video/reel5-desktop.webm" type="video/webm">
-        <source src="assets/video/reel5-desktop.mp4" type="video/mp4">
       </video>
+      <noscript>
+        <video class="hero-video" autoplay muted loop playsinline poster="assets/img/hero-poster.jpg">
+          <source src="assets/video/reel5-desktop.webm" type="video/webm">
+          <source src="assets/video/reel5-desktop.mp4" type="video/mp4">
+        </video>
+      </noscript>
       <div class="hero-overlay"></div>
     </div>
 
