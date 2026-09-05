@@ -12,9 +12,17 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <!-- Matter SQ is a licensed commercial font (Displaay); General Sans is
-     a free lookalike from the same foundry family until it's licensed. -->
+     a free lookalike from the same foundry family until it's licensed.
+     Loaded non-blocking (preload + swap-on-load) rather than as a plain
+     <link rel="stylesheet"> — Fontshare's API has been observed hanging
+     outright (no response, not even an error) rather than just being
+     slow, and a synchronous stylesheet link would stall the entire
+     page's first paint on that hang. Text still renders instantly in
+     the --ff-display fallback stack and swaps to General Sans whenever
+     (if) the request completes; <noscript> covers JS-disabled clients. -->
 <link rel="preconnect" href="https://api.fontshare.com">
-<link href="https://api.fontshare.com/v2/css?f[]=general-sans@400,500,600,700&display=swap" rel="stylesheet">
+<link rel="preload" as="style" href="https://api.fontshare.com/v2/css?f[]=general-sans@400,500,600,700&display=swap" onload="this.onload=null;this.rel='stylesheet'">
+<noscript><link rel="stylesheet" href="https://api.fontshare.com/v2/css?f[]=general-sans@400,500,600,700&display=swap"></noscript>
 <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
