@@ -1,6 +1,12 @@
 # Raw, unoptimized source media (1GB+) — not part of the deployed site
 Portfolio1_10-25/
 
+# Raw video uploads kept locally for future re-encoding — same reasoning
+# as above, just per-file instead of a whole folder (these are tens of
+# MB each; unlike the small -source.png/.jpg assets, they're too big to
+# be worth carrying in git history).
+assets/video/*-source.mp4
+
 # Vercel
 .vercel
 
