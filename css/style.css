@@ -374,6 +374,17 @@ section { padding: 120px 0; }
   display: flex;
   gap: 4px;
   overflow-x: auto;
+  /* Setting only overflow-x makes browsers implicitly treat overflow-y
+     as auto too (CSS Overflow spec) — any sub-pixel height mismatch
+     between cards then opens a tiny vertical scroll range inside the
+     row, which is exactly what let a swipe get "caught" here instead
+     of continuing on to scroll the page. Pin it to hidden explicitly. */
+  overflow-y: hidden;
+  /* Tells the browser this element only handles horizontal panning, so
+     a swipe with any vertical component passes straight through to the
+     page's own scroll instead of the browser hesitating over which
+     axis this element wants. */
+  touch-action: pan-x;
   scroll-snap-type: x mandatory;
   scroll-behavior: smooth;
   -webkit-overflow-scrolling: touch;
