@@ -134,6 +134,49 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   });
 
+  /* Portfolio carousel (horizontal scroll-snap row, ~3 cards/view) */
+  const workGrid = document.getElementById('workGrid');
+  const workPrev = document.getElementById('workPrev');
+  const workNext = document.getElementById('workNext');
+  const workProgressBar = document.getElementById('workProgressBar');
+  let updateWorkCarousel = () => {};
+
+  if (workGrid && workPrev && workNext) {
+    updateWorkCarousel = function () {
+      const maxScroll = workGrid.scrollWidth - workGrid.clientWidth;
+      workPrev.disabled = workGrid.scrollLeft <= 4;
+      workNext.disabled = workGrid.scrollLeft >= maxScroll - 4;
+      if (workProgressBar) {
+        const visibleRatio = maxScroll > 0 ? workGrid.clientWidth / workGrid.scrollWidth : 1;
+        const scrolledRatio = maxScroll > 0 ? workGrid.scrollLeft / maxScroll : 0;
+        workProgressBar.style.width = Math.min(visibleRatio, 1) * 100 + '%';
+        workProgressBar.style.transform = `translateX(${scrolledRatio * (100 / visibleRatio - 100)}%)`;
+      }
+    };
+
+    function pageBy(direction) {
+      workGrid.scrollBy({ left: direction * workGrid.clientWidth, behavior: 'smooth' });
+    }
+
+    workPrev.addEventListener('click', () => pageBy(-1));
+    workNext.addEventListener('click', () => pageBy(1));
+    workGrid.addEventListener('scroll', updateWorkCarousel, { passive: true });
+    window.addEventListener('resize', updateWorkCarousel);
+
+    // Lets a plain vertical-only mouse wheel drive the row (trackpads
+    // already send a horizontal delta on a sideways swipe and are left
+    // alone — this only kicks in when the vertical component clearly
+    // dominates, i.e. an actual mouse wheel).
+    workGrid.addEventListener('wheel', (e) => {
+      if (Math.abs(e.deltaY) > Math.abs(e.deltaX)) {
+        e.preventDefault();
+        workGrid.scrollLeft += e.deltaY;
+      }
+    }, { passive: false });
+
+    updateWorkCarousel();
+  }
+
   /* Portfolio filters */
   const filterBtns = document.querySelectorAll('.filter-btn');
   const workItems = document.querySelectorAll('.work-item');
@@ -146,6 +189,12 @@ document.addEventListener('DOMContentLoaded', () => {
         const show = filter === 'all' || item.dataset.cat === filter;
         item.classList.toggle('hide', !show);
       });
+      // Filtering changes the row's total scrollable width — jumping
+      // back to the start avoids landing scrolled past the end of a
+      // now-shorter row (which would show an empty gap) or mid-way
+      // through cards that no longer make sense together.
+      if (workGrid) workGrid.scrollTo({ left: 0, behavior: 'instant' });
+      updateWorkCarousel();
     });
   });
 
