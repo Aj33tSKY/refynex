@@ -19,21 +19,6 @@ document.addEventListener('DOMContentLoaded', () => {
   document.addEventListener('scroll', onScroll, { passive: true });
   onScroll();
 
-  /*
-   * Real liquid-glass refraction (backdrop-filter: url(#svg-filter))
-   * only renders correctly in Chromium engines — Safari and Firefox
-   * parse the declaration but don't feed real backdrop pixels into the
-   * SVG filter, so it silently no-ops there (confirmed: a genuine,
-   * currently-unresolved platform gap, not a bug in this code). We only
-   * opt in on Chromium and leave everyone else on the plain blur+
-   * saturate glass already set in CSS. "Chrome" appears in the UA
-   * string of every Chromium-based browser (Chrome, Edge, Opera, Brave,
-   * Arc) for legacy compat, and never in Safari's or Firefox's.
-   */
-  if (/Chrome/.test(navigator.userAgent)) {
-    document.documentElement.classList.add('supports-glass-refraction');
-  }
-
   /* Hero title rotating word */
   const heroRotateText = document.getElementById('heroRotateText');
   if (heroRotateText) {
@@ -181,15 +166,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
   document.querySelectorAll('[data-animate]').forEach(el => observer.observe(el));
 
-  const heroVideo = document.getElementById('heroVideo');
-  // Gates the hero CTA glass-refraction proxy below (desktop Chromium
-  // only — non-Chromium browsers can't render the SVG refraction at
-  // all, and it's not worth the extra scroll-sync JS on mobile either).
-  const enableHeroGlass =
-    document.documentElement.classList.contains('supports-glass-refraction') &&
-    window.matchMedia('(min-width: 769px)').matches;
-
   /* Pause hero video when scrolled out of view (saves CPU/battery) */
+  const heroVideo = document.getElementById('heroVideo');
   if (heroVideo) {
     const videoObserver = new IntersectionObserver((entries) => {
       entries.forEach(entry => {
@@ -198,62 +176,6 @@ document.addEventListener('DOMContentLoaded', () => {
       });
     }, { threshold: 0.1 });
     videoObserver.observe(heroVideo);
-  }
-
-  /*
-   * Every glass-refraction element that actually works sits outside the
-   * hero section's DOM/stacking context; the in-hero "View Our Work"
-   * button never has, across several different attempted fixes. Rather
-   * than keep guessing at the hero's internal structure, #heroWorkBtn
-   * stays the real, functional, focusable button, and a decorative
-   * proxy living outside the hero (#heroWorkBtnProxy, position: fixed)
-   * is kept pixel-synced to it and does the actual visual rendering —
-   * matching the one structural trait every working case shares.
-   * pointer-events: none on the proxy means clicks always reach the
-   * real button underneath.
-   */
-  const heroWorkBtn = document.getElementById('heroWorkBtn');
-  const heroWorkBtnProxy = document.getElementById('heroWorkBtnProxy');
-  if (heroWorkBtn && heroWorkBtnProxy && enableHeroGlass) {
-    let proxySyncScheduled = false;
-    function syncHeroCtaProxy() {
-      proxySyncScheduled = false;
-      const r = heroWorkBtn.getBoundingClientRect();
-      heroWorkBtnProxy.style.width = r.width + 'px';
-      heroWorkBtnProxy.style.height = r.height + 'px';
-      heroWorkBtnProxy.style.transform = `translate(${r.left}px, ${r.top}px)`;
-    }
-    // Recomputing the SVG displacement filter at a new position every
-    // scroll frame is expensive enough to visibly lag — swap to the
-    // cheap plain-blur fallback for the duration of active scrolling
-    // and restore the real refraction ~150ms after scrolling settles.
-    let scrollStopTimer = null;
-    function scheduleSync() {
-      heroWorkBtnProxy.classList.add('is-scrolling');
-      clearTimeout(scrollStopTimer);
-      scrollStopTimer = setTimeout(() => heroWorkBtnProxy.classList.remove('is-scrolling'), 150);
-      if (!proxySyncScheduled) {
-        proxySyncScheduled = true;
-        requestAnimationFrame(syncHeroCtaProxy);
-      }
-    }
-    // pointer-events:none on the proxy means it can never receive real
-    // :hover/:focus itself — the real (invisible) button does, so
-    // forward both states across as classes.
-    heroWorkBtn.addEventListener('mouseenter', () => heroWorkBtnProxy.classList.add('is-hover'));
-    heroWorkBtn.addEventListener('mouseleave', () => heroWorkBtnProxy.classList.remove('is-hover'));
-    heroWorkBtn.addEventListener('focus', () => heroWorkBtnProxy.classList.add('is-focus'));
-    heroWorkBtn.addEventListener('blur', () => heroWorkBtnProxy.classList.remove('is-focus'));
-
-    // Delayed so the real button's own reveal-on-load animation
-    // (.hero-actions.reveal) plays fully visible before the swap.
-    setTimeout(() => {
-      syncHeroCtaProxy();
-      heroWorkBtnProxy.classList.add('active');
-      heroWorkBtn.classList.add('cta-proxied');
-      window.addEventListener('scroll', scheduleSync, { passive: true });
-      window.addEventListener('resize', scheduleSync);
-    }, 1700);
   }
 
   /* Contact form */

@@ -19,33 +19,6 @@
 </head>
 <body>
 
-<!--
-  Liquid glass refraction filter (Chromium only; see js/main.js for
-  feature detection). Confirmed working on real hardware-accelerated
-  Chrome over static content (buttons/cards/pills) — deliberately not
-  applied to the hero button (sits over the playing video: Chrome's
-  backdrop-filter cannot read a <video> layer at all) or the sticky
-  header (a full-width bar sharing a hard boundary with large scrolling
-  text produced a jagged tear, tested and reverted earlier).
--->
-<svg style="position:absolute; width:0; height:0; overflow:hidden" aria-hidden="true">
-  <defs>
-    <filter id="glass-distortion" x="-20%" y="-20%" width="140%" height="140%" color-interpolation-filters="sRGB">
-      <feTurbulence type="fractalNoise" baseFrequency="0.012 0.022" numOctaves="2" seed="17" result="noise"/>
-      <feGaussianBlur in="noise" stdDeviation="8" result="smoothNoise"/>
-      <feDisplacementMap in="SourceGraphic" in2="smoothNoise" scale="95" xChannelSelector="R" yChannelSelector="G" result="displaced"/>
-      <feGaussianBlur in="displaced" stdDeviation="1.5" result="softened"/>
-      <feColorMatrix in="softened" type="saturate" values="1.6" result="saturated"/>
-      <feComponentTransfer in="saturated">
-        <feFuncR type="linear" slope="1.05"/>
-        <feFuncG type="linear" slope="1.05"/>
-        <feFuncB type="linear" slope="1.05"/>
-      </feComponentTransfer>
-    </filter>
-  </defs>
-</svg>
-
-
 <!-- Preloader -->
 <div class="preloader" id="preloader"><img src="assets/img/logo-wordmark.webp" alt="Refynelabs"></div>
 
@@ -108,7 +81,7 @@
         Capture the narrative, frame your growth.
       </p>
       <div class="hero-actions reveal">
-        <a href="#work" class="btn btn-primary" id="heroWorkBtn"><span class="btn-label">View Our Work</span></a>
+        <a href="#work" class="btn btn-primary"><span class="btn-label">View Our Work</span></a>
         <a href="#contact" class="btn btn-ghost">Start a Project →</a>
       </div>
     </div>
@@ -376,16 +349,6 @@
     <p>&copy; <span id="year"></span> Refynelabs. All rights reserved.</p>
   </div>
 </footer>
-
-<!--
-  Decorative visual stand-in for #heroWorkBtn, positioned outside the
-  hero's DOM/stacking context (see js/main.js) so the SVG glass
-  refraction actually renders — matching the one structural trait every
-  working glass element on this page shares and the hero button alone
-  lacked. Purely visual: aria-hidden, unfocusable, clicks pass through
-  to the real button underneath, which JS keeps functionally in place.
--->
-<a href="#work" class="btn btn-primary hero-cta-proxy" id="heroWorkBtnProxy" aria-hidden="true" tabindex="-1"><span class="btn-label">View Our Work</span></a>
 
 <script src="js/main.js"></script>
 </body>

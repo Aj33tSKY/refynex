@@ -93,10 +93,7 @@ p { color: var(--ink-dim); }
   box-shadow: inset 0 1px 0 rgba(255,255,255,0.16), 0 4px 16px rgba(0,0,0,0.2);
   color: #fff;
 }
-/* .hero-cta-proxy.is-hover is JS-driven (see main.js) — the proxy has
-   pointer-events:none so it can never receive real :hover itself; the
-   real #heroWorkBtn underneath does, and forwards it here. */
-.btn-primary:hover, .hero-cta-proxy.is-hover {
+.btn-primary:hover {
   background: var(--glass-bg-strong);
   border-color: rgba(255,255,255,0.35);
   box-shadow: inset 0 1px 0 rgba(255,255,255,0.3), 0 6px 20px rgba(0,0,0,0.25);
@@ -117,56 +114,6 @@ p { color: var(--ink-dim); }
 }
 .btn-ghost { color: var(--ink); border-bottom: 1px solid var(--ink); border-radius: 0; padding: 4px 0; }
 .btn-ghost:hover { color: var(--accent); border-color: var(--accent); }
-
-/*
- * Real edge-refraction glass, Chromium only (js/main.js feature
- * detection). The header's .btn-outline sits over the same playing
- * hero video and refracts correctly, so a bare <video> backdrop isn't
- * actually the blocker it was once assumed to be — applied to all glass
- * buttons now. Still NOT the sticky header bar itself (a full-width bar
- * sharing a hard boundary with large scrolling text produced a jagged
- * tear when tested).
- */
-.supports-glass-refraction .btn-primary,
-.supports-glass-refraction .btn-outline,
-.supports-glass-refraction .filter-btn,
-.supports-glass-refraction .service-card {
-  backdrop-filter: url(#glass-distortion);
-  transform: translateZ(0);
-  will-change: backdrop-filter, transform;
-  isolation: isolate;
-}
-/*
- * The real hero button (#heroWorkBtn) is functionally real — focusable,
- * clickable, screen-reader visible — but visually replaced by
- * #heroWorkBtnProxy once JS confirms the proxy is synced and in place.
- * Only applied via a JS-added class so a JS failure never leaves the
- * button invisible with no working stand-in.
- */
-#heroWorkBtn.cta-proxied { opacity: 0; }
-
-.hero-cta-proxy {
-  position: fixed;
-  top: 0; left: 0;
-  margin: 0;
-  pointer-events: none;
-  z-index: 500;
-  display: none;
-  will-change: transform;
-}
-.hero-cta-proxy.active { display: inline-flex; }
-/* Keyboard focus ring, forwarded from the invisible real button by JS
-   (an opacity:0 element's own focus ring would be invisible too). */
-.hero-cta-proxy.is-focus { outline: 2px solid #fff; outline-offset: 3px; }
-/* Recomputing the SVG displacement filter at a new position every
-   scroll frame is expensive — drop to the cheap plain-blur fallback
-   while actively scrolling (JS toggles this, debounced) and restore
-   the real refraction once scrolling settles. ID in the selector to
-   reliably beat .supports-glass-refraction #heroWorkBtnProxy above. */
-#heroWorkBtnProxy.is-scrolling {
-  backdrop-filter: var(--glass-blur);
-  -webkit-backdrop-filter: var(--glass-blur);
-}
 
 /* ============ PRELOADER ============ */
 .preloader {
@@ -277,15 +224,6 @@ p { color: var(--ink-dim); }
   display: flex;
   align-items: flex-end;
 }
-/* overflow:hidden lives here (not on .hero) so it only crops the video
-   to its box — an ancestor overflow:hidden containing the whole hero
-   (buttons included) can silently break SVG-referenced backdrop-filter
-   for descendants in Chromium instead of just clipping them. */
-/* No explicit z-index (was 0) — position:absolute alone still paints
-   correctly behind .hero-content by DOM order, but an explicit z-index
-   here made this its own stacking context, which may be scoping
-   backdrop-filter's capturable content away from .hero-content's glass
-   buttons. */
 .hero-media { position: absolute; inset: 0; overflow: hidden; }
 .hero-video {
   width: 100%; height: 100%;
@@ -300,9 +238,6 @@ p { color: var(--ink-dim); }
 }
 
 .hero-content {
-  /* No explicit z-index (was 1) — position:relative alone still paints
-     correctly above .hero-media by DOM order (it comes later), without
-     creating its own stacking context. See .hero-media comment. */
   position: relative;
   max-width: var(--container);
   margin: 0 auto;
