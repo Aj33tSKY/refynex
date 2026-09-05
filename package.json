@@ -1,0 +1,7 @@
+{
+  "name": "refynelabs-site",
+  "private": true,
+  "scripts": {
+    "build": "node scripts/fingerprint-assets.js"
+  }
+}

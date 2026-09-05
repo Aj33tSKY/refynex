@@ -4,6 +4,9 @@ Portfolio1_10-25/
 # Vercel
 .vercel
 
+# Node
+node_modules
+
 # Env
 .env*.local
 
