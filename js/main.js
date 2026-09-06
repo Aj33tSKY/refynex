@@ -22,7 +22,7 @@ document.addEventListener('DOMContentLoaded', () => {
   /* Hero title rotating word */
   const heroRotateText = document.getElementById('heroRotateText');
   if (heroRotateText) {
-    const phrases = ['big launch', 'brand film', 'product demo', 'founder showcase', 'big event'];
+    const phrases = ['big launch', 'funding round', 'product demo', 'founder story'];
     let phraseIndex = 0;
     let currentWord = phrases[0];
 
@@ -239,6 +239,20 @@ document.addEventListener('DOMContentLoaded', () => {
       });
     }, { threshold: 0.1 });
     videoObserver.observe(heroVideo);
+  }
+
+  const impactVideo = document.getElementById('impactVideo');
+  if (impactVideo) {
+    /* preload="none" above defers the fetch until it's actually about
+       to be seen, then this plays/pauses it in step with scroll so it
+       never runs while off-screen (saves CPU/battery, like heroVideo). */
+    const impactVideoObserver = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) impactVideo.play().catch(() => {});
+        else impactVideo.pause();
+      });
+    }, { threshold: 0.1 });
+    impactVideoObserver.observe(impactVideo);
   }
 
   /* Contact form */
