@@ -163,17 +163,6 @@ document.addEventListener('DOMContentLoaded', () => {
     workGrid.addEventListener('scroll', updateWorkCarousel, { passive: true });
     window.addEventListener('resize', updateWorkCarousel);
 
-    // Lets a plain vertical-only mouse wheel drive the row (trackpads
-    // already send a horizontal delta on a sideways swipe and are left
-    // alone — this only kicks in when the vertical component clearly
-    // dominates, i.e. an actual mouse wheel).
-    workGrid.addEventListener('wheel', (e) => {
-      if (Math.abs(e.deltaY) > Math.abs(e.deltaX)) {
-        e.preventDefault();
-        workGrid.scrollLeft += e.deltaY;
-      }
-    }, { passive: false });
-
     updateWorkCarousel();
   }
 
