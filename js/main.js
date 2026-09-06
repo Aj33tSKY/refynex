@@ -175,29 +175,63 @@ document.addEventListener('DOMContentLoaded', () => {
      * movement) whether the gesture is more horizontal or vertical,
      * and only then either drive scrollLeft ourselves (horizontal) or
      * do nothing and let the page scroll (vertical).
+     *
+     * No scroll-snap anywhere in this: it made every swipe stop dead on
+     * the next item regardless of how far or fast the finger moved.
+     * Momentum below instead just carries on with whatever velocity the
+     * finger had at release and lets friction bring it to a stop
+     * wherever that lands — free-scrolling, like a native photo strip.
      */
     let touchStartX = 0;
     let touchStartY = 0;
     let touchStartScrollLeft = 0;
     let dragAxis = null; // null (undecided) | 'x' | 'y'
+    let lastTouchX = 0;
+    let lastTouchTime = 0;
+    let velocity = 0; // scrollLeft px per ms
+    let momentumFrame = null;
 
-    function snapToNearestItem() {
-      const items = workGrid.querySelectorAll('.work-item:not(.hide)');
-      let closest = null;
-      let closestDist = Infinity;
-      items.forEach(item => {
-        const dist = Math.abs(item.offsetLeft - workGrid.scrollLeft);
-        if (dist < closestDist) { closestDist = dist; closest = item; }
-      });
-      if (closest) workGrid.scrollTo({ left: closest.offsetLeft, behavior: 'smooth' });
+    function stopMomentum() {
+      if (momentumFrame !== null) {
+        cancelAnimationFrame(momentumFrame);
+        momentumFrame = null;
+      }
+    }
+
+    function runMomentum() {
+      let lastTime = performance.now();
+      const friction = 0.0025; // px/ms lost per ms — tuned by feel, not physically exact
+
+      function step(now) {
+        const dt = now - lastTime;
+        lastTime = now;
+
+        const decel = friction * dt;
+        if (velocity > 0) velocity = Math.max(0, velocity - decel);
+        else velocity = Math.min(0, velocity + decel);
+
+        if (Math.abs(velocity) < 0.02) { momentumFrame = null; return; }
+
+        const before = workGrid.scrollLeft;
+        workGrid.scrollTo({ left: before + velocity * dt, behavior: 'instant' });
+        // Hit the start/end of the row — nothing left to coast into.
+        if (workGrid.scrollLeft === before) { momentumFrame = null; return; }
+
+        momentumFrame = requestAnimationFrame(step);
+      }
+      momentumFrame = requestAnimationFrame(step);
     }
 
     workGrid.addEventListener('touchstart', (e) => {
+      stopMomentum();
       const touch = e.touches[0];
       touchStartX = touch.clientX;
       touchStartY = touch.clientY;
       touchStartScrollLeft = workGrid.scrollLeft;
       dragAxis = null;
+      lastTouchX = touch.clientX;
+      lastTouchTime = performance.now();
+      velocity = 0;
     }, { passive: true });
 
     workGrid.addEventListener('touchmove', (e) => {
@@ -208,30 +242,28 @@ document.addEventListener('DOMContentLoaded', () => {
       if (dragAxis === null) {
         if (Math.abs(dx) < 6 && Math.abs(dy) < 6) return;
         dragAxis = Math.abs(dx) > Math.abs(dy) ? 'x' : 'y';
-        // Mandatory snap fighting a manually-driven scrollLeft (it keeps
-        // trying to snap-correct after every touchmove tick) makes the
-        // drag feel sticky — suspend it for the duration of the drag
-        // and snap explicitly on release instead.
-        if (dragAxis === 'x') workGrid.style.scrollSnapType = 'none';
       }
       if (dragAxis === 'x') {
         e.preventDefault();
+
+        const now = performance.now();
+        const dt = now - lastTouchTime;
+        if (dt > 0) velocity = -(touch.clientX - lastTouchX) / dt;
+        lastTouchX = touch.clientX;
+        lastTouchTime = now;
+
         // Plain `.scrollLeft = ` is still subject to this element's CSS
         // scroll-behavior: smooth (it applies to any scroll, not just
         // wheel/nav-button ones), which would animate/lag behind every
         // touchmove tick instead of tracking the finger 1:1. Forcing
-        // 'instant' here bypasses that; snapToNearestItem() below opts
-        // back into a smooth animation for the release.
+        // 'instant' here bypasses that.
         workGrid.scrollTo({ left: touchStartScrollLeft - dx, behavior: 'instant' });
       }
       // dragAxis === 'y': leave the event alone, the page scrolls itself.
     }, { passive: false });
 
     workGrid.addEventListener('touchend', () => {
-      if (dragAxis === 'x') {
-        workGrid.style.scrollSnapType = '';
-        snapToNearestItem();
-      }
+      if (dragAxis === 'x') runMomentum();
       dragAxis = null;
     });
   }

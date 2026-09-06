@@ -428,7 +428,6 @@ section { padding: 120px 0; }
      (see main.js), which also sidesteps the same real-device-only bug
      for the drag itself. */
   touch-action: pan-y;
-  scroll-snap-type: x mandatory;
   scroll-behavior: smooth;
   -webkit-overflow-scrolling: touch;
   scrollbar-width: none;
@@ -440,7 +439,6 @@ section { padding: 120px 0; }
   aspect-ratio: 4 / 5;
   overflow: hidden;
   cursor: pointer;
-  scroll-snap-align: start;
   transition: opacity 0.4s var(--ease), transform 0.4s var(--ease);
 }
 .work-item.hide { display: none; }
