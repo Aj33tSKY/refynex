@@ -416,11 +416,18 @@ section { padding: 120px 0; }
      row, which is exactly what let a swipe get "caught" here instead
      of continuing on to scroll the page. Pin it to hidden explicitly. */
   overflow-y: hidden;
-  /* Tells the browser this element only handles horizontal panning, so
-     a swipe with any vertical component passes straight through to the
-     page's own scroll instead of the browser hesitating over which
-     axis this element wants. */
-  touch-action: pan-x;
+  /* touch-action: pan-x (letting the browser own horizontal panning
+     natively, same as vertical page scroll) was the first attempt at
+     "vertical swipes here should fall through to the page" — confirmed
+     on a real iPhone that WebKit still grabs the gesture for this
+     scroller regardless. pan-y instead tells the browser this element
+     only handles *vertical* panning (which it never actually uses,
+     overflow-y is hidden) — so touching down here is never treated as
+     "start of a horizontal scroll" and a vertical drag always resolves
+     to the page. Horizontal swiping is then driven manually in JS
+     (see main.js), which also sidesteps the same real-device-only bug
+     for the drag itself. */
+  touch-action: pan-y;
   scroll-snap-type: x mandatory;
   scroll-behavior: smooth;
   -webkit-overflow-scrolling: touch;

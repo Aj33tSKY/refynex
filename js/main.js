@@ -164,6 +164,76 @@ document.addEventListener('DOMContentLoaded', () => {
     window.addEventListener('resize', updateWorkCarousel);
 
     updateWorkCarousel();
+
+    /*
+     * Manual horizontal drag, paired with touch-action: pan-y in CSS.
+     * That CSS makes the browser hand every touch here straight to the
+     * page's own (vertical) scrolling instead of grabbing it for this
+     * row — which also means the row no longer scrolls horizontally on
+     * its own, so swiping through the images has to be driven from
+     * here: track the touch, decide once (on the first ~6px of
+     * movement) whether the gesture is more horizontal or vertical,
+     * and only then either drive scrollLeft ourselves (horizontal) or
+     * do nothing and let the page scroll (vertical).
+     */
+    let touchStartX = 0;
+    let touchStartY = 0;
+    let touchStartScrollLeft = 0;
+    let dragAxis = null; // null (undecided) | 'x' | 'y'
+
+    function snapToNearestItem() {
+      const items = workGrid.querySelectorAll('.work-item:not(.hide)');
+      let closest = null;
+      let closestDist = Infinity;
+      items.forEach(item => {
+        const dist = Math.abs(item.offsetLeft - workGrid.scrollLeft);
+        if (dist < closestDist) { closestDist = dist; closest = item; }
+      });
+      if (closest) workGrid.scrollTo({ left: closest.offsetLeft, behavior: 'smooth' });
+    }
+
+    workGrid.addEventListener('touchstart', (e) => {
+      const touch = e.touches[0];
+      touchStartX = touch.clientX;
+      touchStartY = touch.clientY;
+      touchStartScrollLeft = workGrid.scrollLeft;
+      dragAxis = null;
+    }, { passive: true });
+
+    workGrid.addEventListener('touchmove', (e) => {
+      const touch = e.touches[0];
+      const dx = touch.clientX - touchStartX;
+      const dy = touch.clientY - touchStartY;
+
+      if (dragAxis === null) {
+        if (Math.abs(dx) < 6 && Math.abs(dy) < 6) return;
+        dragAxis = Math.abs(dx) > Math.abs(dy) ? 'x' : 'y';
+        // Mandatory snap fighting a manually-driven scrollLeft (it keeps
+        // trying to snap-correct after every touchmove tick) makes the
+        // drag feel sticky — suspend it for the duration of the drag
+        // and snap explicitly on release instead.
+        if (dragAxis === 'x') workGrid.style.scrollSnapType = 'none';
+      }
+      if (dragAxis === 'x') {
+        e.preventDefault();
+        // Plain `.scrollLeft = ` is still subject to this element's CSS
+        // scroll-behavior: smooth (it applies to any scroll, not just
+        // wheel/nav-button ones), which would animate/lag behind every
+        // touchmove tick instead of tracking the finger 1:1. Forcing
+        // 'instant' here bypasses that; snapToNearestItem() below opts
+        // back into a smooth animation for the release.
+        workGrid.scrollTo({ left: touchStartScrollLeft - dx, behavior: 'instant' });
+      }
+      // dragAxis === 'y': leave the event alone, the page scrolls itself.
+    }, { passive: false });
+
+    workGrid.addEventListener('touchend', () => {
+      if (dragAxis === 'x') {
+        workGrid.style.scrollSnapType = '';
+        snapToNearestItem();
+      }
+      dragAxis = null;
+    });
   }
 
   /* Portfolio filters */
