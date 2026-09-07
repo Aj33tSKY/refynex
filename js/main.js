@@ -339,43 +339,47 @@ document.addEventListener('DOMContentLoaded', () => {
     impactVideoObserver.observe(impactVideo);
   }
 
-  /* Contact form */
+  /* Contact form (only present on the homepage — guarded so pages like
+     the legal/policy ones, which reuse this same script for the shared
+     header/footer behavior above, don't throw on the missing form). */
   const form = document.getElementById('contactForm');
-  const formNote = document.getElementById('formNote');
-  const submitBtn = form.querySelector('button[type="submit"]');
-  const submitBtnLabel = submitBtn.querySelector('.btn-label') || submitBtn;
+  if (form) {
+    const formNote = document.getElementById('formNote');
+    const submitBtn = form.querySelector('button[type="submit"]');
+    const submitBtnLabel = submitBtn.querySelector('.btn-label') || submitBtn;
 
-  form.addEventListener('submit', async (e) => {
-    e.preventDefault();
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
 
-    const name = form.name.value.trim();
-    const email = form.email.value.trim();
-    const message = form.message.value.trim();
+      const name = form.name.value.trim();
+      const email = form.email.value.trim();
+      const message = form.message.value.trim();
 
-    submitBtn.disabled = true;
-    submitBtnLabel.textContent = 'Sending…';
-    formNote.textContent = '';
+      submitBtn.disabled = true;
+      submitBtnLabel.textContent = 'Sending…';
+      formNote.textContent = '';
 
-    try {
-      const res = await fetch('/api/contact', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ name, email, message }),
-      });
-      const data = await res.json();
+      try {
+        const res = await fetch('/api/contact', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ name, email, message }),
+        });
+        const data = await res.json();
 
-      if (res.ok && data.ok) {
-        formNote.textContent = "Thanks — your message is on its way. We'll get back to you as soon as possible.";
-        form.reset();
-      } else {
-        formNote.textContent = data.error || 'Something went wrong — please email launch@refynelabs.co.uk directly.';
+        if (res.ok && data.ok) {
+          formNote.textContent = "Thanks — your message is on its way. We'll get back to you as soon as possible.";
+          form.reset();
+        } else {
+          formNote.textContent = data.error || 'Something went wrong — please email launch@refynelabs.co.uk directly.';
+        }
+      } catch (err) {
+        formNote.textContent = 'Something went wrong — please email launch@refynelabs.co.uk directly.';
+      } finally {
+        submitBtn.disabled = false;
+        submitBtnLabel.textContent = 'Submit';
       }
-    } catch (err) {
-      formNote.textContent = 'Something went wrong — please email launch@refynelabs.co.uk directly.';
-    } finally {
-      submitBtn.disabled = false;
-      submitBtnLabel.textContent = 'Submit';
-    }
-  });
+    });
+  }
 
 });

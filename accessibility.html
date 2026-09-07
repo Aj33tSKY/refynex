@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Accessibility — Refynelabs</title>
+<meta name="description" content="Refynelabs' accessibility commitment, what's been done so far, and known limitations.">
+<link rel="icon" type="image/svg+xml" href="assets/logo/icon.svg">
+<link rel="icon" type="image/png" sizes="32x32" href="assets/img/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="assets/img/favicon-16x16.png">
+<link rel="apple-touch-icon" sizes="180x180" href="assets/img/apple-touch-icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="preconnect" href="https://api.fontshare.com">
+<link rel="preload" as="style" href="https://api.fontshare.com/v2/css?f[]=general-sans@400,500,600,700&display=swap" onload="this.onload=null;this.rel='stylesheet'">
+<noscript><link rel="stylesheet" href="https://api.fontshare.com/v2/css?f[]=general-sans@400,500,600,700&display=swap"></noscript>
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<div class="preloader" id="preloader"><img src="assets/logo/logo.svg" alt="Refynelabs"></div>
+
+<header class="site-header" id="siteHeader">
+  <div class="header-inner">
+    <a href="/" class="logo"><img src="assets/logo/logo.svg" alt="Refynelabs"></a>
+    <nav class="main-nav" id="mainNav">
+      <a href="/#services" data-nav>Services</a>
+      <a href="/#work" data-nav>Work</a>
+      <a href="/#about" data-nav>About</a>
+      <a href="/#contact" data-nav>Contact</a>
+    </nav>
+    <div class="header-cta">
+      <a href="/#contact" class="btn btn-outline"><span class="btn-label">Get In Touch</span></a>
+    </div>
+    <button class="nav-toggle" id="navToggle" aria-label="Toggle menu">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+</header>
+
+<div class="mobile-menu" id="mobileMenu">
+  <a href="/#services" data-nav>Services</a>
+  <a href="/#work" data-nav>Work</a>
+  <a href="/#about" data-nav>About</a>
+  <a href="/#contact" data-nav>Contact</a>
+</div>
+
+<main>
+
+  <section class="legal-hero">
+    <div class="section-inner">
+      <h1>Accessibility</h1>
+      <p class="updated">Last updated: 7 September 2026</p>
+    </div>
+  </section>
+
+  <section class="legal-content">
+    <div class="section-inner">
+      <div class="legal-body">
+
+        <h2>Our commitment</h2>
+        <p>We want this website to be usable by as many people as possible, including people using a keyboard, a screen reader, or with a preference for reduced motion. We're aiming for WCAG 2.1 AA as a working standard, and treat this as ongoing work rather than a box we've ticked once.</p>
+
+        <h2>What we've done</h2>
+        <ul>
+          <li>Every button, link and form field is reachable and operable by keyboard alone, with a visible focus indicator on every interactive element.</li>
+          <li>The contact form has real, programmatically-associated labels for every field (not just placeholder text), a status message that's announced to screen readers when you submit it, and native HTML validation on required fields.</li>
+          <li>Images carry descriptive alt text, and icon-only buttons (like the carousel's previous/next arrows) have an aria-label.</li>
+          <li>Decorative motion — the hero's reveal animation, the rotating headline word, hover effects, scroll-triggered fades — is disabled site-wide for anyone with "reduce motion" set at the OS level.</li>
+          <li>Text and background colours are chosen for contrast against this site's dark theme.</li>
+        </ul>
+
+        <h2>Known limitations</h2>
+        <p>We're aware of a couple of gaps we haven't closed yet:</p>
+        <ul>
+          <li>The draggable progress bar under the "Selected Work" carousel is operable by mouse and touch, but not yet by keyboard — the carousel's arrow buttons are the accessible way to move through it for now.</li>
+          <li>Some of the "Selected Work" images are decorative photography without a dedicated audio/text alternative to the imagery itself, beyond their alt text.</li>
+        </ul>
+        <p>If either of these — or anything else — gets in your way, we'd genuinely like to know. See "Feedback" below.</p>
+
+        <h2>Third-party content</h2>
+        <p>This site loads web fonts from Google Fonts and Fontshare; we don't control their accessibility beyond how we apply them here.</p>
+
+        <h2>Feedback</h2>
+        <p>If you hit an accessibility barrier anywhere on this site, email <a href="mailto:launch@refynelabs.co.uk">launch@refynelabs.co.uk</a> with what you were trying to do and what happened — we'll get back to you and look at fixing it.</p>
+
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<footer class="site-footer">
+  <div class="section-inner footer-grid">
+    <div class="footer-brand">
+      <a href="/" class="logo"><img src="assets/logo/logo.svg" alt="Refynelabs"></a>
+      <p>High-end video for AI, SaaS &amp; technology startups.</p>
+    </div>
+    <div class="footer-col">
+      <h4>Services</h4>
+      <a href="/#services">Launch</a>
+      <a href="/#services">Founder</a>
+      <a href="/#services">Product</a>
+    </div>
+    <div class="footer-col">
+      <h4>Studio</h4>
+      <a href="/#work">Work</a>
+      <a href="/#about">About</a>
+      <a href="/#contact">Contact</a>
+    </div>
+    <div class="footer-col">
+      <h4>Connect</h4>
+      <a href="mailto:launch@refynelabs.co.uk">launch@refynelabs.co.uk</a>
+      <a href="#" target="_blank" rel="noopener">Instagram</a>
+      <a href="#" target="_blank" rel="noopener">LinkedIn</a>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <div class="footer-legal">
+      <a href="/privacy">Privacy Policy</a>
+      <a href="/terms">Terms &amp; Conditions</a>
+      <a href="/cookies">Cookies Policy</a>
+      <a href="/accessibility">Accessibility</a>
+      <a href="/refund-policy">Refund Policy</a>
+    </div>
+    <p>&copy; <span id="year"></span> Refynelabs. All rights reserved.</p>
+  </div>
+</footer>
+
+<script src="js/main.js"></script>
+</body>
+</html>

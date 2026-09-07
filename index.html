@@ -181,11 +181,12 @@
       <p class="eyebrow">Why This Matters</p>
       <h2>Content is often the first impression of your product.</h2>
       <p>
-        We've seen a single launch film outperform a week of paid ads.
-        Most startup video looks like it was made by someone who doesn't
-        understand what's being sold. We do. That's the difference between
-        content that gets scrolled past and content that gets your next
-        round, your next hire, or your next customer.
+        A launch film made by people who understand your product does more
+        for your business than a generic one ever will. Most startup video
+        looks like it was made by someone who doesn't understand what's
+        being sold. We do. That's the difference between content that gets
+        scrolled past and content that gets your next round, your next
+        hire, or your next customer.
       </p>
       <a href="#contact" class="btn btn-outline"><span class="btn-label">Let's Talk About Your Launch →</span></a>
     </div>
@@ -368,12 +369,23 @@
 
       <form class="contact-form" id="contactForm">
         <div class="form-row">
-          <input type="text" name="name" placeholder="Your name" required>
-          <input type="email" name="email" placeholder="Email address" required>
+          <div>
+            <label class="sr-only" for="contactName">Your name</label>
+            <input type="text" id="contactName" name="name" placeholder="Your name" autocomplete="name" required>
+          </div>
+          <div>
+            <label class="sr-only" for="contactEmail">Email address</label>
+            <input type="email" id="contactEmail" name="email" placeholder="Email address" autocomplete="email" required>
+          </div>
         </div>
-        <textarea name="message" rows="4" placeholder="Tell us about your project..." required></textarea>
+        <label class="sr-only" for="contactMessage">Tell us about your project</label>
+        <textarea id="contactMessage" name="message" rows="4" placeholder="Tell us about your project..." required></textarea>
+        <label class="form-consent">
+          <input type="checkbox" name="consent" required>
+          <span>I agree to the <a href="/privacy">Privacy Policy</a> and consent to Refynelabs contacting me about my project.</span>
+        </label>
         <button type="submit" class="btn btn-primary"><span class="btn-label">Submit</span></button>
-        <p class="form-note" id="formNote"></p>
+        <p class="form-note" id="formNote" role="status" aria-live="polite"></p>
       </form>
     </div>
   </section>
@@ -411,6 +423,13 @@
   </div>
 
   <div class="footer-bottom">
+    <div class="footer-legal">
+      <a href="/privacy">Privacy Policy</a>
+      <a href="/terms">Terms &amp; Conditions</a>
+      <a href="/cookies">Cookies Policy</a>
+      <a href="/accessibility">Accessibility</a>
+      <a href="/refund-policy">Refund Policy</a>
+    </div>
     <p>&copy; <span id="year"></span> Refynelabs. All rights reserved.</p>
   </div>
 </footer>

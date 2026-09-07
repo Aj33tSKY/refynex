@@ -22,6 +22,22 @@
 
 html { scroll-behavior: smooth; }
 
+/* Respect the OS-level "reduce motion" preference: collapses every
+   CSS transition/animation on the site (hero reveal, rotating hero
+   word, hover scales, scroll-reveal, carousel) to effectively instant,
+   and drops the smooth-scroll easing above. !important is needed here
+   because plenty of the rules being overridden are more specific than
+   this selector — this block has to win regardless of source order. */
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
 body {
   background: var(--bg);
   color: var(--ink);
@@ -66,6 +82,34 @@ h3 { font-size: 1.5rem; }
 p { color: var(--ink-dim); }
 
 ::selection { background: var(--accent); color: #fff; }
+
+/* Visible only to keyboard users (mouse/touch clicks don't match
+   :focus-visible), on a dark background where the browser default
+   outline is easy to miss against similarly-dark surrounding UI. */
+a:focus-visible,
+button:focus-visible,
+input:focus-visible,
+textarea:focus-visible,
+[tabindex]:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 3px;
+  border-radius: 4px;
+}
+
+/* Screen-reader-only: visually hidden but still announced and still
+   reachable in the accessibility tree, unlike display:none. Used for
+   form <label>s where the placeholder already shows the same text
+   visually — the label is what actually gets announced/associated,
+   the placeholder is just a sighted-user convenience. */
+.sr-only {
+  position: absolute;
+  width: 1px; height: 1px;
+  padding: 0; margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
 
 /* ============ BUTTONS ============ */
 .btn {
@@ -560,6 +604,22 @@ section { padding: 120px 0; }
   box-shadow: inset 0 1px 0 rgba(255,255,255,0.1), 0 0 0 3px rgba(217,79,48,0.18);
 }
 .contact-form textarea { margin-bottom: 20px; }
+.form-consent {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  margin-bottom: 20px;
+  font-size: 0.85rem;
+  color: var(--ink-dim);
+}
+.form-consent input[type="checkbox"] {
+  width: 16px; height: 16px;
+  flex-shrink: 0;
+  margin-top: 2px;
+  accent-color: var(--accent);
+}
+.form-consent a { color: var(--ink); text-decoration: underline; text-underline-offset: 2px; }
+.form-consent a:hover { color: var(--accent); }
 .contact-form .btn { width: 100%; justify-content: center; }
 .form-note { text-align: center; margin-top: 16px; font-size: 0.85rem; color: var(--accent); min-height: 1em; }
 
@@ -580,7 +640,33 @@ section { padding: 120px 0; }
   padding: 26px clamp(20px, 5vw, 48px);
   text-align: center;
 }
+.footer-legal { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px 20px; margin-bottom: 14px; }
+.footer-legal a { font-size: 0.78rem; color: var(--ink-faint); transition: color 0.3s; }
+.footer-legal a:hover { color: var(--accent); }
 .footer-bottom p { font-size: 0.8rem; color: var(--ink-faint); }
+
+/* ============ LEGAL / POLICY PAGES ============ */
+.legal-hero { padding: 160px 0 56px; border-bottom: 1px solid var(--line); }
+.legal-hero h1 { font-size: clamp(2.2rem, 5vw, 3.2rem); color: var(--ink); }
+.legal-hero .updated { margin-top: 14px; font-size: 0.85rem; color: var(--ink-faint); }
+.legal-content { padding: 64px 0 120px; }
+.legal-content .legal-body { max-width: 720px; }
+.legal-content h2 {
+  text-transform: none;
+  font-family: var(--ff-body);
+  font-weight: 700;
+  font-size: 1.25rem;
+  color: var(--ink);
+  margin: 44px 0 16px;
+  letter-spacing: -0.01em;
+}
+.legal-content h2:first-child { margin-top: 0; }
+.legal-content p { margin-bottom: 16px; }
+.legal-content ul, .legal-content ol { margin: 0 0 16px 20px; color: var(--ink-dim); }
+.legal-content li { margin-bottom: 8px; line-height: 1.7; }
+.legal-content a { color: var(--accent); text-decoration: underline; text-underline-offset: 2px; }
+.legal-content a:hover { color: var(--ink); }
+.legal-content strong { color: var(--ink); }
 
 /* ============ SCROLL REVEAL (JS-driven) ============ */
 [data-animate] { opacity: 0; transform: translateY(40px); transition: opacity 0.8s var(--ease), transform 0.8s var(--ease); }

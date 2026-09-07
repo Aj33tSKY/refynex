@@ -28,7 +28,15 @@ const crypto = require('crypto');
 
 const ROOT = path.join(__dirname, '..');
 const ASSETS_DIR = path.join(ROOT, 'assets');
-const REWRITE_FILES = ['index.html', 'js/main.js'];
+const REWRITE_FILES = [
+  'index.html',
+  'js/main.js',
+  'privacy.html',
+  'terms.html',
+  'cookies.html',
+  'accessibility.html',
+  'refund-policy.html',
+];
 const HASH_LENGTH = 10;
 
 // Raw archival uploads (kept for future re-derivation, e.g. re-cropping
