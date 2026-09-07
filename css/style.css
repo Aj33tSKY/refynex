@@ -416,18 +416,20 @@ section { padding: 120px 0; }
      row, which is exactly what let a swipe get "caught" here instead
      of continuing on to scroll the page. Pin it to hidden explicitly. */
   overflow-y: hidden;
-  /* Lets the browser handle horizontal swipes here entirely on its
-     own — native momentum, no JS driving it. (A prior version drove
-     this manually in JS with touch-action: pan-y, worked around a real
-     iPhone bug where vertical swipes got stuck here instead of
-     scrolling the page — but that combination also had
-     scroll-snap-type: mandatory active, and mandatory scroll-snap is a
-     documented trigger for exactly that iOS bug. Now that scroll-snap
-     is gone entirely, plain pan-x should no longer have anything to
-     trip on — but this hasn't been re-confirmed on a real iPhone, so
-     re-check there if vertical scrolling over this row misbehaves
-     again.) */
-  touch-action: pan-x;
+  /* touch-action: pan-x (native horizontal scrolling, letting vertical
+     fall through) was tried twice now and confirmed on a real iPhone
+     both times that WebKit still grabs the gesture for this scroller
+     regardless of direction — including after removing scroll-snap
+     entirely, which had been the leading theory for why. pan-y is the
+     only thing that's actually held up on-device: it tells the browser
+     this element only handles *vertical* panning (never actually used,
+     overflow-y is hidden), so a touch here is never eligible to become
+     a horizontal scroll natively and a vertical drag always resolves
+     to the page. Horizontal swiping is then driven manually in JS (see
+     main.js) — deliberately just 1:1 finger tracking with no momentum
+     or snap added on top, since that's what was making it feel sticky
+     when it also tried to simulate inertia. */
+  touch-action: pan-y;
   scroll-behavior: smooth;
   -webkit-overflow-scrolling: touch;
   scrollbar-width: none;
