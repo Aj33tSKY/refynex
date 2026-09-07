@@ -470,21 +470,29 @@ section { padding: 120px 0; }
 }
 
 .work-progress {
-  height: 3px;
+  height: 8px;
   background: var(--glass-border);
-  border-radius: 3px;
+  border-radius: 4px;
   margin-top: 24px;
   overflow: hidden;
+  cursor: pointer;
+  /* This is now a drag-to-scrub control in its own right, not just a
+     status readout — touch-action: none so a touch here is claimed
+     entirely for scrubbing instead of being ambiguous with page
+     scroll (unlike the carousel row above, dragging this bar isn't
+     meant to ever fall through to scrolling the page). */
+  touch-action: none;
 }
 .work-progress span {
   display: block;
   height: 100%;
   width: 33%;
   background: var(--accent);
-  border-radius: 3px;
+  border-radius: 4px;
   transition: width 0.2s, transform 0.2s;
   transform: translateX(0);
 }
+.work-progress:active span { background: var(--ink); }
 .work-item img {
   width: 100%; height: 100%; object-fit: cover;
   transition: transform 0.7s var(--ease), filter 0.5s;

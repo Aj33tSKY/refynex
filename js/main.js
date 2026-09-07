@@ -218,6 +218,36 @@ document.addEventListener('DOMContentLoaded', () => {
       }
       // dragAxis === 'y': leave the event alone, the page scrolls itself.
     }, { passive: false });
+
+    /*
+     * Progress bar doubles as a scrubber: drag anywhere along it to jump
+     * straight to that point in the row — a faster way through all the
+     * images than swiping one screen at a time, and it isn't gated by
+     * the vertical-scroll fix above (this bar doesn't sit over content
+     * the page needs to scroll past, so touch-action: none can claim
+     * the whole gesture outright, no axis-detection needed).
+     */
+    const workProgress = document.getElementById('workProgress');
+    if (workProgress) {
+      const scrubTo = (clientX) => {
+        const rect = workProgress.getBoundingClientRect();
+        const ratio = Math.min(1, Math.max(0, (clientX - rect.left) / rect.width));
+        const maxScroll = workGrid.scrollWidth - workGrid.clientWidth;
+        workGrid.scrollTo({ left: ratio * maxScroll, behavior: 'instant' });
+      };
+
+      let scrubbing = false;
+      workProgress.addEventListener('pointerdown', (e) => {
+        scrubbing = true;
+        workProgress.setPointerCapture(e.pointerId);
+        scrubTo(e.clientX);
+      });
+      workProgress.addEventListener('pointermove', (e) => {
+        if (scrubbing) scrubTo(e.clientX);
+      });
+      workProgress.addEventListener('pointerup', () => { scrubbing = false; });
+      workProgress.addEventListener('pointercancel', () => { scrubbing = false; });
+    }
   }
 
   /* Portfolio filters */
