@@ -374,7 +374,7 @@ document.addEventListener('DOMContentLoaded', () => {
       formNote.textContent = 'Something went wrong — please email launch@refynelabs.co.uk directly.';
     } finally {
       submitBtn.disabled = false;
-      submitBtnLabel.textContent = 'Send Message';
+      submitBtnLabel.textContent = 'Submit';
     }
   });
 
