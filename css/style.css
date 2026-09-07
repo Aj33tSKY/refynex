@@ -358,11 +358,11 @@ section { padding: 120px 0; }
   align-items: center;
   justify-content: center;
   background: var(--bg-alt);
-  padding: 48px;
+  padding: 24px;
 }
 .featured-video {
-  max-width: 62%;
-  max-height: 82%;
+  max-width: 94%;
+  max-height: 94%;
   width: auto;
   height: auto;
   border-radius: 16px;
@@ -416,18 +416,18 @@ section { padding: 120px 0; }
      row, which is exactly what let a swipe get "caught" here instead
      of continuing on to scroll the page. Pin it to hidden explicitly. */
   overflow-y: hidden;
-  /* touch-action: pan-x (letting the browser own horizontal panning
-     natively, same as vertical page scroll) was the first attempt at
-     "vertical swipes here should fall through to the page" — confirmed
-     on a real iPhone that WebKit still grabs the gesture for this
-     scroller regardless. pan-y instead tells the browser this element
-     only handles *vertical* panning (which it never actually uses,
-     overflow-y is hidden) — so touching down here is never treated as
-     "start of a horizontal scroll" and a vertical drag always resolves
-     to the page. Horizontal swiping is then driven manually in JS
-     (see main.js), which also sidesteps the same real-device-only bug
-     for the drag itself. */
-  touch-action: pan-y;
+  /* Lets the browser handle horizontal swipes here entirely on its
+     own — native momentum, no JS driving it. (A prior version drove
+     this manually in JS with touch-action: pan-y, worked around a real
+     iPhone bug where vertical swipes got stuck here instead of
+     scrolling the page — but that combination also had
+     scroll-snap-type: mandatory active, and mandatory scroll-snap is a
+     documented trigger for exactly that iOS bug. Now that scroll-snap
+     is gone entirely, plain pan-x should no longer have anything to
+     trip on — but this hasn't been re-confirmed on a real iPhone, so
+     re-check there if vertical scrolling over this row misbehaves
+     again.) */
+  touch-action: pan-x;
   scroll-behavior: smooth;
   -webkit-overflow-scrolling: touch;
   scrollbar-width: none;
@@ -581,7 +581,7 @@ section { padding: 120px 0; }
 @media (max-width: 1024px) {
   .work-item { flex-basis: calc((100% - 4px) / 2); }
   .featured { grid-template-columns: 1fr; }
-  .featured-media { min-height: 480px; padding: 32px; }
+  .featured-media { min-height: 480px; padding: 20px; }
   .footer-grid { grid-template-columns: 1fr 1fr; }
 }
 
